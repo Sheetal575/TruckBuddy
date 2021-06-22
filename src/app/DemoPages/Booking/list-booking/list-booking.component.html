@@ -1,0 +1,169 @@
+<div fxLayout fxLayoutAlign="center center">
+  <mat-form-field fxFlex="40%" class="pr-2">
+    <input
+      matInput
+      type="text"
+      (keyup)="doFilter($event.target.value)"
+      placeholder="Search By Name"
+    />
+  </mat-form-field>
+  <mat-form-field
+    fxFlex="40%"
+    class="px-2"
+    *ngIf="loggedInProfile?.type?.toString() == 'SUPER_ADMIN'"
+  >
+    <mat-label>Filter By Source City</mat-label>
+    <mat-select>
+      <mat-option
+        value=""
+        (onSelectionChange)="changeCityFilter($event, false)"
+      >
+        All Cities</mat-option
+      >
+      <mat-option
+        *ngFor="let city of cities | keyvalue"
+        value="{{ city.value | titlecase }}"
+        (onSelectionChange)="changeCityFilter($event, true)"
+      >
+        {{ city.value | titlecase }}</mat-option
+      >
+    </mat-select>
+  </mat-form-field>
+  <mat-form-field
+    fxFlex="40%"
+    class="px-2"
+    *ngIf="loggedInProfile?.type?.toString() == 'SUPER_ADMIN'"
+  >
+    <mat-label>Filter By Destination City</mat-label>
+    <mat-select>
+      <mat-option
+        value=""
+        (onSelectionChange)="changeCityFilter($event, false)"
+      >
+        All Cities</mat-option
+      >
+      <mat-option
+        *ngFor="let city of cities | keyvalue"
+        value="{{ city.value | titlecase }}" 
+        (onSelectionChange)="changeCityFilter($event, false)"
+      >
+        {{ city.value | titlecase }}</mat-option
+      >
+    </mat-select>
+  </mat-form-field>
+  <mat-form-field>
+    <mat-label>Select Date Range</mat-label>
+    <input
+      type="text"
+      ngxDaterangepickerMd
+      autocomplete="off"
+      matInput
+      [lockStartDate]="false"
+      (change)="choosedDate($event)"
+    />
+  </mat-form-field>
+  <div class="row px-3 float-right">
+    <a routerLink="">
+      <label class="bold-label">Go Back</label>
+      <i class="px-3 pe-7s-back"> </i>
+    </a>
+  </div>
+</div>
+<div class="mat-elevation-z8">
+  <table mat-table [dataSource]="dataSource" matSort matSortStart="desc">
+    <ng-container matColumnDef="createdBy">
+      <th
+        mat-header-cell
+        *matHeaderCellDef
+        mat-sort-header
+        class="left-align-header"
+      >
+        Created By
+      </th>
+      <td mat-cell *matCellDef="let element" class="left-align-cell">
+        {{ element.requestedByRef?.name | titlecase }}
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="clientName">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Client Name</th>
+      <td mat-cell *matCellDef="let element">
+        {{ element.clientRef?.name | titlecase }}
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="source">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Source Address</th>
+      <td mat-cell *matCellDef="let element">
+        {{ getAddress(element.source) | titlecase }}
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="destination">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>
+        Destination(s) Address
+      </th>
+      <td mat-cell *matCellDef="let element">
+        {{ getDestinationAddress(element.destinations) | titlecase }}
+      </td> 
+    </ng-container>
+    <ng-container matColumnDef="vehicle">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Vehicle Detail</th>
+      <td mat-cell *matCellDef="let element">
+        {{ getVehicleName(element?.vehicleCategoryId) }}
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="bookingDateTime">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>
+        Booking Date & Time
+      </th>
+      <td mat-cell *matCellDef="let element">
+        {{ getBookingDateTime(element?.requestedTime) | date: "medium" }}
+      </td>
+    </ng-container>
+    
+    <ng-container matColumnDef="PropsalMoney" >
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>
+        Proposal Money
+      </th>
+      <td mat-cell *matCellDef="let element">
+        {{ element.proposalMoney}}
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="action">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Actions</th>
+      <td mat-cell *matCellDef="let element">
+        <i
+          title="View"
+          [routerLink]="['../view-booking']"
+          fragment="{{ element.id }}"
+          class="pe-7s-look px-2"
+          style="font-size: 20px; color: green; cursor: pointer"
+        >
+        </i>
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="delete">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Actions</th>
+      <td mat-cell *matCellDef="let element">
+        <i
+          *ngIf="
+            loggedInProfile?.type?.toString() == 'SUPER_ADMIN' &&
+            element?.requestStatus == 'AWAITED'
+          "
+          class="pe-7s-close-circle"
+          aria-hidden="true"
+          title="Delete"
+          (click)="deleteBooking(element)"
+          style="font-size: 20px; color: red; cursor: pointer"
+          ></i
+        >
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+  </table>
+
+  <mat-paginator [pageSize]="10" [pageSizeOptions]="[5, 10, 15, 20, 25]">
+  </mat-paginator>
+</div>

@@ -1,0 +1,55 @@
+<div class="d-flex">
+  <div class="header-btn-lg pr-0">
+    <div class="widget-content p-0">
+      <div class="widget-content-wrapper">
+        <div class="widget-content-left">
+          <div class="btn-group" ngbDropdown placement="bottom-right">
+            <button
+              type="button"
+              class="btn btn-link py-0 px-3 mr-2"
+              ngbDropdownToggle
+            >
+              <span>
+                <div class="icon-wrapper icon-wrapper-alt rounded-circle">
+                  <img
+                    width="60"
+                    [src]="profileImage"
+                    alt="{{ profile?.fullName }}"
+                    class="rounded-circle"
+                    *ngIf="isImageAvailable"
+                  />
+                  <div
+                    width="42"
+                    class="rounded-circle py-1"
+                    style="
+                      background-color: rgb(165, 206, 247);
+                      height: 30px;
+                      width: 30px;
+                      font-weight: bolder;
+                    "
+                    *ngIf="!isImageAvailable"
+                  >
+                    {{ profileImage }}
+                  </div>
+                </div>
+              </span>
+            </button>
+            <div ngbDropdownMenu>
+              <h6 class="dropdown-item disabled pb-0 mb-0">
+                {{ profile?.fullName }}
+                <small class="dropdown-item  disabled px-0">
+                  {{ profileTypeFormatter(profile?.type) }}
+                </small>
+              </h6 >
+              <div class="dropdown-divider"></div>
+              <button class="dropdown-item" (click)="editProfile()">
+                Update Profile
+              </button>
+              <button class="dropdown-item" (click)="logout()">LogOut</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

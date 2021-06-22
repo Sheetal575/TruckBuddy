@@ -1,0 +1,278 @@
+<app-page-title
+  [heading]="heading"
+  [subheading]="subheading"
+  [icon]="icon"
+></app-page-title>
+<div class="main-card mb-3 card">
+  <div class="card-body">
+    <h5 class="card-title">Create New Booking</h5>
+    <form>
+      <div class="position-relative form-group">
+        <label class="bold-label" for="source">Pickup Address</label
+        ><input
+          name="source"
+          id="source"
+          placeholder="Enter Pickup Address"
+          type="text"
+          #source
+          (keyup.enter)="updateLocalArea(source.value, 0, true)"
+          (blur)="updateLocalArea(source.value, 0, true)"
+          style="text-transform: capitalize"
+          autocomplete="off"
+          class="form-control"
+        />
+        <div class="form-row pt-2">
+          <div class="col-md-6">
+            <div class="position-relative form-group">
+              <select
+                class="form-control"
+                #sourceState
+                (change)="onStateChange(sourceState.value, true, null)"
+              >
+                <option label="--Select State --"></option>
+                <option
+                  *ngFor="let state of states | keyvalue"
+                  value="{{ state.key }}"
+                >
+                  {{ state.value | titlecase }}
+                </option>
+              </select>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="position-relative form-group">
+              <label
+                class="form-control disabled"
+                *ngIf="booking && booking.source && booking.source.city"
+                >{{ booking.source.city | titlecase }}</label
+              >
+              <select
+                class="form-control"
+                *ngIf="!booking || !booking.source || !booking.source.city"
+                #sourceCity
+                (focusout)="onCityChange(sourceCity.value, true, null)"
+              >
+                <option label="--Select City --"></option>
+                <option
+                  *ngFor="let city of cities | keyvalue"
+                  value="{{ city.key }}"
+                >
+                  {{ city.value | titlecase }}
+                </option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        class="position-relative form-group"
+        *ngFor="let destination of destinations; let i = index"
+      >
+        <label class="bold-label" for="source" *ngIf="destinations.length == 1"
+          >Drop Location</label
+        >
+        <label class="bold-label" for="source" *ngIf="destinations.length != 1"
+          >Drop Location {{ i + 1 }}</label
+        >
+        <div class="row px-3 float-right" *ngIf="i == 0">
+          <a (click)="addMoreDestinations()">
+            <label class="bold-label">Add More Drop Location</label>
+            <i class="px-3 pe-7s-note"> </i>
+          </a>
+        </div>
+        <div class="row px-3 float-right" *ngIf="i != 0">
+          <a (click)="removeDestination(i)">
+            <label class="bold-label">Remove</label>
+            <i class="px-3 fa fa-ban"> </i>
+          </a>
+        </div>
+        <input
+          placeholder="Enter Drop Location"
+          type="text"
+          #destinationArea
+          (keyup.enter)="updateLocalArea(destinationArea.value, i, false)"
+          (blur)="updateLocalArea(destinationArea.value, i, false)"
+          style="text-transform: capitalize"
+          autocomplete="off"
+          class="form-control"
+        />
+        <div class="form-row pt-2">
+          <div class="col-md-6">
+            <div class="position-relative form-group">
+              <select
+                class="form-control"
+                #destinationState
+                (change)="onStateChange(destinationState.value, false, i)"
+              >
+                <option label="--Select State --"></option>
+                <option
+                  *ngFor="let state of states | keyvalue"
+                  value="{{ state.key }}"
+                >
+                  {{ state.value | titlecase }}
+                </option>
+              </select>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="position-relative form-group">
+              <label
+                class="form-control disabled"
+                *ngIf="
+                  booking &&
+                  booking.destinations &&
+                  booking.destinations.length > i &&
+                  booking.destinations[i].city
+                "
+                >{{ booking.destinations[i].city | titlecase }}</label
+              >
+              <select
+                class="form-control"
+                *ngIf="
+                  !booking ||
+                  !booking.destinations ||
+                  !booking.destinations[i].city
+                "
+                #destinationCity
+                (focusout)="onCityChange(destinationCity.value, false, i)"
+              >
+                <option label="--Select City --"></option>
+                <option
+                  *ngFor="let city of cities | keyvalue"
+                  value="{{ city.key }}"
+                >
+                  {{ city.value | titlecase }}
+                </option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="position-relative form-group">
+        <div class="form-row">
+          <div class="col-md-6">
+            <label class="bold-label" for="bookingDateTime"
+              >Booking Date & Time</label
+            >
+
+            <input
+              matInput
+              [ngxMatDatetimePicker]="picker"
+              name="bookingDateTime"
+              id="bookingDateTime"
+              placeholder="Click to select Booking Date & Time"
+              type="text"
+              class="form-control"
+              [min]="minDate"
+              [max]="maxDate"
+              disabled="false"
+              [(ngModel)]="bookingDateTime"
+              autocomplete="off"
+              (click)="picker.open()"
+            />
+          </div>
+          <div class="col-md-6 pt-4">
+            <mat-datepicker-toggle
+              matSuffix
+              [for]="picker"
+            ></mat-datepicker-toggle>
+            <ngx-mat-datetime-picker
+              #picker
+              touchUi="true"
+              enableMeridian="true"
+            >
+            </ngx-mat-datetime-picker>
+          </div>
+        </div>
+      </div>
+      <div class="form-row">
+        <!-- <div class="col-md-6" >
+          <div class="position-relative form-group">
+            <label class="bold-label" for="exampleCity">Load Type</label
+            >
+            <select class="form-control">
+              <option label="--Select Load Type --"></option>
+              <option *ngFor='let loadType of loadTypes | keyvalue' value="{{loadType.key}}">
+                {{loadType.value | titlecase}}</option>
+            </select>
+          </div>
+        </div> -->
+        <div [ngClass]="isHCV() ? 'col-md-6' : 'col-md-12'">
+          <div class="position-relative form-group">
+            <label class="bold-label" for="exampleState">Vehicle Type</label>
+            <select
+              class="form-control"
+              #vehicleType
+              (change)="onVehicleChange(vehicleType.value)"
+            >
+              <option label="--Select Vehicle Type --"></option>
+              <option
+                *ngFor="let vehicleType of vehicleTypes | keyvalue"
+                value="{{ vehicleType.key }}"
+              >
+                {{ vehicleType.value | titlecase }}
+              </option>
+            </select>
+          </div>
+        </div>
+        <div class="col-md-6" *ngIf="isHCV()">
+          <div class="position-relative form-group">
+            <label class="bold-label" for="exampleState">Proposal Amount</label>
+            <input
+              #proposalAmount
+              name="proposalAmount"
+              id="proposalAmount"
+              placeholder="Enter Proposal Amount (e.g. - 20000)"
+              type="text"
+              class="form-control"
+              appNumberOnly
+              autocomplete="off"
+              (keyup.enter)="addProposalAmount(proposalAmount.value)"
+              (blur)="addProposalAmount(proposalAmount.value)"
+            />
+          </div>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="col-md-6">
+          <div class="position-relative form-group">
+            <label class="bold-label" for="clientNumber">Client Number</label>
+            <input
+              #clientNumber
+              name="clientNumber"
+              id="clientNumber"
+              placeholder="Enter Client Number"
+              type="text"
+              class="form-control"
+              appNumberOnly
+              autocomplete="off"
+              maxlength="10"
+              (keyup.enter)="findClient(clientNumber.value)"
+              (blur)="findClient(clientNumber.value)"
+            />
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="position-relative form-group">
+            <label class="bold-label" for="clientName">Client Name</label>
+            <input
+              [(ngModel)]="clientName"
+              name="clientName"
+              id="clientName"
+              placeholder="Enter Client Name"
+              autocomplete="off"
+              type="text"
+              class="form-control"
+              disabled="true"
+            />
+          </div>
+        </div>
+      </div>
+      <div class="d-flex justify-content-center">
+        <button class="mt-2 btn btn-primary" (click)="createBooking()">
+          Create Booking
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

@@ -1,0 +1,374 @@
+<app-page-title
+  [heading]="heading"
+  [subheading]="subheading"
+  [icon]="icon"
+></app-page-title>
+<div class="row mb-3" *ngIf="!isLoading">
+  <div class="col-md-12">
+    <div class="main-card mb-3 card">
+      <div class="card-body">
+        <h5 class="card-title">Profile</h5>
+        <mat-horizontal-stepper [linear]="true" #stepper>
+          <mat-step *ngIf="!id">
+            <form>
+              <ng-template matStepLabel>Fill out your details</ng-template>
+
+              <div class="form-row">
+                <div class="form-group required col-md-6">
+                  <div class="position-relative required">
+                    <label for="business" class="control-label"
+                      >Business Type
+                    </label>
+                    <mat-button-toggle-group
+                      class="ml-2"
+                      name="fontStyle"
+                      aria-label="Font Style"
+                    >
+                      <mat-button-toggle
+                        class="mb-0 ml-4"
+                        *ngFor="let businessType of businessTypes | keyvalue"
+                        value="businessType.key"
+                        [ngClass]="
+                          selectedBusiness != businessType.key
+                            ? 'btn-transition btn btn-outline-primary'
+                            : 'btn btn-primary'
+                        "
+                        (click)="onBusinessTypeChange(businessType.key)"
+                        >{{ businessType.value }}</mat-button-toggle
+                      >
+                    </mat-button-toggle-group>
+                  </div>
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group required col-md-6" [formGroup]="contact">
+                  <div class="position-relative form-group required">
+                    <label for="mobile" class="control-label">Mobile</label>
+                    <input
+                      name="mobile"
+                      id="mobile"
+                      placeholder="Enter Mobile"
+                      type="text"
+                      class="form-control"
+                      formControlName="mobile"
+                      appNumberOnly
+                      maxlength="10"
+                    />
+                    <app-form-field-error-display
+                      [displayError]="
+                        isFieldValid(contact, 'mobile', 'required')
+                      "
+                      errorMsg="Mobile Number Required"
+                    >
+                    </app-form-field-error-display>
+                    <app-form-field-error-display
+                      [displayError]="
+                        isFieldValid(contact, 'mobile', 'minlength')
+                      "
+                      errorMsg="Invalid Mobile Number"
+                    >
+                    </app-form-field-error-display>
+                  </div>
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="col-md-6 float-right">
+                  <button
+                    type="button"
+                    class="btn btn-primary btn-lg"
+                    (click)="findProfile(stepper)"
+                  >
+                    Proceed
+                  </button>
+                </div>
+              </div>
+            </form>
+          </mat-step>
+          <mat-step *ngIf="loadProfileForm">
+            <ng-template matStepLabel>Create Profile</ng-template>
+            <app-add-profile
+              [mobile]="contact.get('mobile').value"
+              [type]="profileSearchReq.profileType"
+              (outputEmitter)="afterProfileCreation($event, stepper)"
+            >
+            </app-add-profile>
+          </mat-step>
+          <mat-step [stepControl]="businessForm">
+            <ng-template matStepLabel>Create Business</ng-template>
+            <form
+              [formGroup]="businessForm"
+              (ngSubmit)="onSubmitBusinessForm(stepper)"
+            >
+              <div class="form-row">
+                <div class="col-md-12">
+                  <div class="position-relative form-group required">
+                    <label for="businessName" class="control-label"
+                      >Business Name</label
+                    >
+                    <input
+                      name="businessName"
+                      id="businessName"
+                      placeholder="Enter Business Name"
+                      type="text"
+                      class="form-control"
+                      formControlName="businessName"
+                      appAlphabetOnly
+                      required
+                    />
+                    <app-form-field-error-display
+                      [displayError]="
+                        isFieldValid(businessForm, 'businessName', 'required')
+                      "
+                      errorMsg="Business Name Required"
+                    >
+                    </app-form-field-error-display>
+                  </div>
+                </div>
+                <div
+                  class="form-group required col-md-6"
+                  formGroupName="contact"
+                >
+                  <div class="position-relative form-group required">
+                    <label for="email" class="control-label">Email</label
+                    ><input
+                      name="email"
+                      id="email"
+                      placeholder="Enter Email"
+                      type="email"
+                      class="form-control"
+                      formControlName="email"
+                    />
+                    <app-form-field-error-display
+                      [displayError]="
+                        isFieldValid(
+                          businessForm.get('contact'),
+                          'email',
+                          'required'
+                        )
+                      "
+                      errorMsg="Email Required"
+                    >
+                    </app-form-field-error-display>
+                    <app-form-field-error-display
+                      [displayError]="
+                        isFieldValid(
+                          businessForm.get('contact'),
+                          'email',
+                          'email'
+                        )
+                      "
+                      errorMsg="Invalid Email"
+                    >
+                    </app-form-field-error-display>
+                    <app-form-field-error-display
+                      [displayError]="
+                        isFieldValid(
+                          businessForm.get('contact'),
+                          'email',
+                          'pattern'
+                        )
+                      "
+                      errorMsg="Invalid Email"
+                    >
+                    </app-form-field-error-display>
+                  </div>
+                </div>
+                <div
+                  class="form-group required col-md-6"
+                  formGroupName="contact"
+                >
+                  <div class="position-relative form-group required">
+                    <label for="contactNumber" class="control-label"
+                      >Contact Number</label
+                    ><input
+                      name="contactNumber"
+                      id="contactNumber"
+                      placeholder="Enter Contact Number"
+                      type="text"
+                      class="form-control"
+                      formControlName="mobile"
+                      maxlength="10"
+                      appNumberOnly
+                    />
+                    <app-form-field-error-display
+                      [displayError]="
+                        isFieldValid(
+                          businessForm.get('contact'),
+                          'mobile',
+                          'required'
+                        )
+                      "
+                      errorMsg="Invalid Mobile Number"
+                    >
+                    </app-form-field-error-display>
+                  </div>
+                </div>
+                <div
+                  class="form-group required col-md-12"
+                >
+                <div class="position-relative form-group required">
+                  <label for="gst" class="control-label"
+                    >GST Number</label
+                  ><input
+                    name="gst"
+                    id="gst"
+                    placeholder="Enter GST Number"
+                    type="text"
+                    class="form-control"
+                    formControlName="gst"
+                  />
+                  <app-form-field-error-display
+                    [displayError]="
+                      isFieldValid(
+                        businessForm,
+                        'gst',
+                        'required'
+                      )
+                    "
+                    errorMsg="Enter GST Number"
+                  >
+                  </app-form-field-error-display>
+                </div>
+                </div>
+                <div
+                  class="form-group required col-md-12"
+                  formGroupName="address"
+                >
+                  <div class="position-relative form-group required">
+                    <label for="localArea" class="control-label"
+                      >Business Address</label
+                    ><input
+                      name="localArea"
+                      id="localArea"
+                      placeholder="Enter Business Address"
+                      type="text"
+                      class="form-control"
+                      formControlName="localArea"
+                    />
+                    <app-form-field-error-display
+                      [displayError]="
+                        isFieldValid(
+                          businessForm.get('address'),
+                          'localArea',
+                          'required'
+                        )
+                      "
+                      errorMsg="Invalid Local Area"
+                    >
+                    </app-form-field-error-display>
+                  </div>
+                </div>
+                <div
+                  class="form-group required col-md-6"
+                  formGroupName="address"
+                >
+                  <div class="position-relative form-group required">
+                    <label for="state" class="control-label">State</label>
+                    <select
+                      class="form-control"
+                      #state
+                      (change)="onStateChange(state.value)"
+                      value="{{ selectedStateId }}"
+                    >
+                      <option label="--Select State --" selected></option>
+                      <option
+                        *ngFor="let state of states | keyvalue"
+                        value="{{ state.key }}"
+                      >
+                        {{ state.value | titlecase }}
+                      </option>
+                    </select>
+                    <app-form-field-error-display
+                      [displayError]="
+                        isFieldValid(
+                          businessForm.get('address'),
+                          'state',
+                          'required'
+                        )
+                      "
+                      errorMsg="State Required"
+                    >
+                    </app-form-field-error-display>
+                  </div>
+                </div>
+                <div
+                  class="form-group required col-md-6"
+                  formGroupName="address"
+                >
+                  <div class="position-relative form-group required">
+                    <label for="city" class="control-label">City</label>
+                    <input
+                      name="city"
+                      id="city"
+                      type="text"
+                      placeholder="City"
+                      class="form-control"
+                      appAlphabetOnly
+                      disabled
+                      formControlName="city"
+                      *ngIf="!isStateChanged"
+                    />
+                    <select
+                      *ngIf="isStateChanged"
+                      class="form-control"
+                      #city
+                      (change)="onCityChange(city.value)"
+                    >
+                      <option label="--Select City --" selected></option>
+                      <option
+                        *ngFor="let city of cities | keyvalue"
+                        value="{{ city.value }}"
+                      >
+                        {{ city.value | titlecase }}
+                      </option>
+                    </select>
+                    <app-form-field-error-display
+                      [displayError]="
+                        isFieldValid(
+                          businessForm.get('address'),
+                          'city',
+                          'required'
+                        )
+                      "
+                      errorMsg="City Required"
+                    >
+                    </app-form-field-error-display>
+                  </div>
+                </div>
+              </div>
+              <div>
+                <div class="form-row">
+                  <button
+                    type="button"
+                    class="mr-2 mb-2 b tn btn-primary"
+                    matStepperPrevious
+                  >
+                    Back
+                  </button>
+                  <button type="submit" class="mr-2 mb-2 btn btn-primary">
+                    Save & Next
+                  </button>
+                </div>
+              </div>
+            </form>
+          </mat-step>
+          <mat-step>
+            <ng-template matStepLabel>Done</ng-template>
+            <p>You are now done.</p>
+            <div>
+              <div class="form-row">
+                <button
+                  type="button"
+                  class="mr-2 mb-2 btn btn-primary"
+                  (click)="onSuccessfulBusinessCreate(stepper)"
+                >
+                  Done
+                </button>
+              </div>
+            </div>
+          </mat-step>
+        </mat-horizontal-stepper>
+      </div>
+    </div>
+  </div>
+</div>

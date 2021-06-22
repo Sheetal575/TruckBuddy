@@ -1,0 +1,1015 @@
+<div class="main-card mb-3 card" *ngIf="!isLoading">
+  <div class="card-body">
+    <div class="position-relative row">
+      <div
+        class="col-sm-6 d-flex justify-content-between"
+        style="display: inherit"
+      >
+        <h5 class="card-title"><b> Order Invoice Status</b></h5>
+        <h6
+          class="font-weight-bold pt-1 blink_me"
+          [ngClass]="getTextColorCss()"
+        >
+          {{ orderInvoice.state?.toString() | uppercase }}
+        </h6>
+      </div>
+      <div class="col-sm-6 float-right">
+        <a
+          style="cursor: pointer"
+          (click)="goBack()"
+          class="mb-2 mr-2 btn btn-secondary float-sm-right float-md-right float-lg-right float-xl-right"
+          >Back</a
+        >
+        <a
+          style="cursor: pointer"
+          *ngIf="
+            orderInvoice.state != 'CANCELLED' &&
+            orderInvoice.state != 'REJECTED' &&
+            orderInvoice.state != 'ORDER_COMPLETED'
+          "
+          (click)="cancelOrder()"
+          class="mb-2 mr-2 btn btn-outline-info text-hover-white float-sm-right float-md-right float-lg-right float-xl-right"
+          >Cancel Order</a
+        >
+        <a
+          style="cursor: pointer"
+          *ngIf="orderInvoice.orderId != null"
+          [routerLink]="['../../orderInvoice/edit-order-invoice']"
+          fragment="{{ orderInvoice.id }}"
+          class="mb-2 mr-2 btn btn-outline-success text-hover-white float-sm-right float-md-right float-lg-right float-xl-right"
+          >Edit Order Invoice</a
+        >
+        <a
+          style="cursor: pointer"
+          *ngIf="
+            orderInvoice.orderId != null &&
+            orderInvoice.state != 'ORDER_COMPLETED' &&
+              orderInvoice.state != 'CANCELLED' &&
+              orderInvoice.state != 'REJECTED'
+          "
+          target="_blank"
+          [href]="trackOrder(orderInvoice.orderId)"
+          class="mb-2 mr-2 btn btn-outline-info text-hover-white float-sm-right float-md-right float-lg-right float-xl-right"
+          >Track Order</a
+        >
+      </div>
+    </div>
+    <form>
+      <div class="position-relative row">
+        <h5 class="col-sm-3 col-form-label font-weight-bold">Order Id</h5>
+        <h5 class="col-sm-1 col-form-label font-weight-bold">:</h5>
+        <h6 class="col-sm-8 col-form-label">
+          {{ orderInvoice.orderId }}
+        </h6>
+      </div>
+
+      <div class="position-relative row">
+        <h5 class="col-sm-3 col-form-label font-weight-bold">
+          Booking Date & Time
+        </h5>
+        <h5 class="col-sm-1 col-form-label font-weight-bold">:</h5>
+        <h6 class="col-sm-8 col-form-label">
+          {{ getDate(orderInvoice.requestedTime) | date: "medium" }}
+        </h6>
+      </div>
+
+      <div class="position-relative row">
+        <h5 class="col-sm-3 col-form-label font-weight-bold">Remarks</h5>
+        <h5 class="col-sm-1 col-form-label font-weight-bold">:</h5>
+        <h6 class="col-sm-8 col-form-label">
+          {{ orderInvoice.remarks | titlecase }}
+        </h6>
+      </div>
+
+      <div class="position-relative row">
+        <h5 class="col-sm-3 col-form-label font-weight-bold">Consignor Name</h5>
+        <h5 class="col-sm-1 col-form-label font-weight-bold">:</h5>
+        <h6 class="col-sm-8 col-form-label">
+          {{ orderInvoice.consignorName | titlecase }}
+        </h6>
+      </div>
+      <div class="position-relative row">
+        <h5 class="col-sm-3 col-form-label font-weight-bold">
+          Consignor Number
+        </h5>
+        <h5 class="col-sm-1 col-form-label font-weight-bold">:</h5>
+        <h6 class="col-sm-8 col-form-label">
+          {{ orderInvoice.consignorNumber }}
+        </h6>
+      </div>
+
+      <div class="position-relative row">
+        <h5 class="col-sm-3 col-form-label font-weight-bold">Customer Name</h5>
+        <h5 class="col-sm-1 col-form-label font-weight-bold">:</h5>
+        <h6 class="col-sm-8 col-form-label">
+          {{ orderInvoice.customer?.name | titlecase }}
+        </h6>
+      </div>
+
+      <div class="position-relative main-card mb-3 card">
+        <div class="card-body border">
+          <h5 class="card-title">Vehicle Details</h5>
+          <div class="row position-relative">
+            <h5 class="col-sm-3 col-form-label font-weight-bold">
+              Vehicle Registration Number
+            </h5>
+            <h5 class="col-sm-1 col-form-label font-weight-bold">:</h5>
+            <h6 class="col-sm-8 col-form-label">
+              {{ orderInvoice.vehicleDetails?.vehicleRegNo | uppercase }}
+            </h6>
+          </div>
+        </div>
+      </div>
+      <div class="position-relative main-card mb-3 card">
+        <div class="card-body border">
+          <h5 class="card-title">Driver Details</h5>
+          <div class="row position-relative">
+            <h5 class="col-sm-3 col-form-label font-weight-bold">Name</h5>
+            <h5 class="col-sm-1 col-form-label font-weight-bold">:</h5>
+            <h6 class="col-sm-8 col-form-label">
+              {{ orderInvoice.vehicleDetails?.driver?.name | titlecase }}
+            </h6>
+          </div>
+          <div class="row position-relative">
+            <h5 class="col-sm-3 col-form-label font-weight-bold">
+              Contact Number
+            </h5>
+            <h5 class="col-sm-1 col-form-label font-weight-bold">:</h5>
+            <h6 class="col-sm-8 col-form-label">
+              {{ getContactNumber(orderInvoice.vehicleDetails?.driver?.id) }}
+            </h6>
+          </div>
+        </div>
+      </div>
+
+      <div class="position-relative main-card mb-3 card">
+        <div class="card-body border">
+          <h5 class="card-title">Pickup Location Details</h5>
+          <ng-templete
+            *ngFor="
+              let orderPickupSource of orderInvoice.orderPickupSources;
+              let i = index
+            "
+          >
+            <div class="card-body border my-2">
+              <div class="position-relative row">
+                <h5 class="col-sm-3 col-form-label font-weight-bold">
+                  Pickup Location
+                </h5>
+
+                <h5 class="col-sm-1 col-form-label font-weight-bold">:</h5>
+                <h6 class="col-sm-8 col-form-label">
+                  {{ getAddress(orderPickupSource?.address) | titlecase }}
+                </h6>
+              </div>
+              <div class="position-relative row">
+                <h5 class="col-sm-3 col-form-label font-weight-bold">
+                  Load Number
+                </h5>
+
+                <h5 class="col-sm-1 col-form-label font-weight-bold">:</h5>
+                <h6 class="col-sm-8 col-form-label">
+                  {{ orderPickupSource?.loadNo }}
+                </h6>
+              </div>
+              <div class="position-relative row">
+                <h5 class="col-sm-3 col-form-label font-weight-bold">
+                  Labour Count
+                </h5>
+
+                <h5 class="col-sm-1 col-form-label font-weight-bold">:</h5>
+                <h6 class="col-sm-8 col-form-label">
+                  {{ orderPickupSource?.labourCount }}
+                </h6>
+              </div>
+              <div
+                class="position-relative main-card mb-3 card"
+                *ngIf="
+                  orderPickupSource.packages &&
+                  orderPickupSource?.packages?.length > 0
+                "
+              >
+                <div class="card-body border">
+                  <h5 class="card-title">Package(s) Details</h5>
+                  <ng-templete
+                    *ngFor="
+                      let package of orderPickupSource.packages;
+                      let i = index
+                    "
+                  >
+                    <div class="position-relative row">
+                      <h5 class="col-sm-3 col-form-label font-weight-bold">
+                        Description
+                      </h5>
+                      <h5 class="col-sm-1 col-form-label font-weight-bold">
+                        :
+                      </h5>
+                      <h6 class="col-sm-8 col-form-label">
+                        {{ package?.description | titlecase }}
+                      </h6>
+                    </div>
+                    <div class="position-relative row">
+                      <h5 class="col-sm-3 col-form-label font-weight-bold">
+                        Bill Number
+                      </h5>
+                      <h5 class="col-sm-1 col-form-label font-weight-bold">
+                        :
+                      </h5>
+                      <h6 class="col-sm-8 col-form-label">
+                        {{ package?.billNumber }}
+                      </h6>
+                    </div>
+                    <div class="position-relative row">
+                      <h5 class="col-sm-3 col-form-label font-weight-bold">
+                        Amount
+                      </h5>
+                      <h5 class="col-sm-1 col-form-label font-weight-bold">
+                        :
+                      </h5>
+                      <h6 class="col-sm-8 col-form-label">
+                        {{ package?.amount }}
+                      </h6>
+                    </div>
+                    <div class="position-relative row">
+                      <h5 class="col-sm-3 col-form-label font-weight-bold">
+                        Freight Payment
+                      </h5>
+                      <h5 class="col-sm-1 col-form-label font-weight-bold">
+                        :
+                      </h5>
+                      <h6 class="col-sm-8 col-form-label">
+                        {{ package?.freightPayment }}
+                      </h6>
+                    </div>
+                  </ng-templete>
+                </div>
+              </div>
+              <div
+                class="position-relative main-card mb-3 card"
+                *ngIf="orderPickupSource?.timeStats"
+              >
+                <div class="card-body border">
+                  <h5 class="card-title">TimeStats(s) Details</h5>
+                  <div class="position-relative row">
+                    <h5 class="col-sm-3 col-form-label font-weight-bold">
+                      Stats Type
+                    </h5>
+                    <h5 class="col-sm-1 col-form-label font-weight-bold">:</h5>
+                    <h6 class="col-sm-8 col-form-label">
+                      {{
+                        orderPickupSource?.timeStats?.type?.toString()
+                          | titlecase
+                      }}
+                    </h6>
+                  </div>
+                  <div class="position-relative row">
+                    <h5 class="col-sm-3 col-form-label font-weight-bold">
+                      Arrival Time
+                    </h5>
+                    <h5 class="col-sm-1 col-form-label font-weight-bold">:</h5>
+                    <h6
+                      class="col-sm-8 col-form-label"
+                      *ngIf="
+                        orderPickupSource.timeStats &&
+                        orderPickupSource.timeStats.arrivalTime > 0
+                      "
+                    >
+                      {{
+                        getDate(orderPickupSource?.timeStats?.arrivalTime)
+                          | date: "medium"
+                      }}
+                    </h6>
+                  </div>
+                  <div class="position-relative row">
+                    <h5 class="col-sm-3 col-form-label font-weight-bold">
+                      Work Start Time
+                    </h5>
+                    <h5 class="col-sm-1 col-form-label font-weight-bold">:</h5>
+                    <h6
+                      class="col-sm-8 col-form-label"
+                      *ngIf="
+                        orderPickupSource.timeStats &&
+                        orderPickupSource.timeStats.workStart > 0
+                      "
+                    >
+                      {{
+                        getDate(orderPickupSource?.timeStats?.workStart)
+                          | date: "medium"
+                      }}
+                    </h6>
+                  </div>
+                  <div class="position-relative row">
+                    <h5 class="col-sm-3 col-form-label font-weight-bold">
+                      Work End Time
+                    </h5>
+                    <h5 class="col-sm-1 col-form-label font-weight-bold">:</h5>
+                    <h6
+                      class="col-sm-8 col-form-label"
+                      *ngIf="
+                        orderPickupSource.timeStats &&
+                        orderPickupSource.timeStats.workEnd > 0
+                      "
+                    >
+                      {{
+                        getDate(orderPickupSource?.timeStats?.workEnd)
+                          | date: "medium"
+                      }}
+                    </h6>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </ng-templete>
+        </div>
+      </div>
+
+      <div class="position-relative main-card mb-3 card">
+        <div class="card-body border">
+          <h5 class="card-title">Drop Location Details</h5>
+          <ng-templete
+            *ngFor="
+              let orderDeliveryLocation of orderInvoice.orderDeliveryLocations;
+              let i = index
+            "
+          >
+            <div class="card-body border my-2">
+              <div class="position-relative row">
+                <h5 class="col-sm-3 col-form-label font-weight-bold">
+                  Drop Location
+                </h5>
+
+                <h5 class="col-sm-1 col-form-label font-weight-bold">:</h5>
+                <h6 class="col-sm-8 col-form-label">
+                  {{ getAddress(orderDeliveryLocation?.address) | titlecase }}
+                </h6>
+              </div>
+              <div class="position-relative row">
+                <h5 class="col-sm-3 col-form-label font-weight-bold">
+                  LR Number
+                </h5>
+
+                <h5 class="col-sm-1 col-form-label font-weight-bold">:</h5>
+                <h6 class="col-sm-2 col-form-label">
+                  {{ orderDeliveryLocation?.lrId }}
+                </h6>
+                <a
+                  style="cursor: pointer"
+                  target="_blank"
+                  [href]="
+                    downloadLR(orderInvoice.orderId, orderDeliveryLocation.lrId)
+                  "
+                  class="btn btn-outline-success col-sm-2 col-form-label"
+                >
+                  Download LR
+                </a>
+                <div
+                  class="col-sm-3 form-check py-2 font-weight-bold"
+                  style="text-align: center"
+                  *ngIf="
+                    !orderDeliveryLocation.physicalPod ||
+                    !orderDeliveryLocation.physicalPod.podAvailable
+                  "
+                >
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    #pod
+                    (change)="podReceived(i, pod.checked)"
+                    [checked]="getPODChecked(orderDeliveryLocation)"
+                  />
+                  <label class="form-check-label" for="pod-recieved">
+                    Is POD Recieved?
+                  </label>
+                </div>
+                <div
+                  class="col-sm-3 form-check py-2 font-weight-bold"
+                  style="text-align: center"
+                  *ngIf="
+                    orderDeliveryLocation.physicalPod &&
+                    orderDeliveryLocation.physicalPod.podAvailable
+                  "
+                >
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    checked
+                    disabled
+                  />
+                  <label class="form-check-label" for="pod-recieved">
+                    POD Received
+                  </label>
+                  <i
+                    aria-hidden="true"
+                    class="fa fa-fw"
+                    style="color: forestgreen; font-size: 20px"
+                    title="POD Recieved"
+                    ></i
+                  >
+                </div>
+              </div>
+              <div
+                class="position-relative row"
+                *ngIf="
+                  orderDeliveryLocation.physicalPod &&
+                  orderDeliveryLocation.physicalPod.podAvailable
+                "
+              >
+                <h5 class="col-sm-3 col-form-label font-weight-bold">
+                  POD Submitted By
+                </h5>
+
+                <h5 class="col-sm-1 col-form-label font-weight-bold">:</h5>
+                <h6 class="col-sm-2 col-form-label">
+                  {{
+                    orderDeliveryLocation.physicalPod.submittedBy.name
+                      | titlecase
+                  }}
+                </h6>
+                <h5 class="col-sm-3 col-form-label font-weight-bold">
+                  Contact Number
+                </h5>
+                <h5 class="col-sm-1 col-form-label font-weight-bold">:</h5>
+                <h6 class="col-sm-2 col-form-label">
+                  {{
+                    getContactNumber(
+                      orderDeliveryLocation.physicalPod.submittedBy.id
+                    )
+                  }}
+                </h6>
+              </div>
+              <div
+                class="position-relative row"
+                *ngIf="
+                  orderDeliveryLocation.physicalPod &&
+                  orderDeliveryLocation.physicalPod.podAvailable
+                "
+              >
+                <h5 class="col-sm-3 col-form-label font-weight-bold">
+                  POD Recieved By
+                </h5>
+
+                <h5 class="col-sm-1 col-form-label font-weight-bold">:</h5>
+                <h6 class="col-sm-2 col-form-label">
+                  {{
+                    orderDeliveryLocation.physicalPod.receivedBy.name
+                      | titlecase
+                  }}
+                </h6>
+                <h5 class="col-sm-3 col-form-label font-weight-bold">
+                  Contact Number
+                </h5>
+                <h5 class="col-sm-1 col-form-label font-weight-bold">:</h5>
+                <h6 class="col-sm-2 col-form-label">
+                  {{
+                    getContactNumber(
+                      orderDeliveryLocation.physicalPod.receivedBy.id
+                    )
+                  }}
+                </h6>
+              </div>
+              <div
+                class="position-relative row"
+                *ngIf="
+                  orderDeliveryLocation.physicalPod &&
+                  orderDeliveryLocation.physicalPod.podAvailable
+                "
+              >
+                <h5 class="col-sm-3 col-form-label font-weight-bold">
+                  POD Receiving Address
+                </h5>
+
+                <h5 class="col-sm-1 col-form-label font-weight-bold">:</h5>
+                <h6 class="col-sm-8 col-form-label">
+                  {{
+                    getAddress(orderDeliveryLocation.physicalPod.location)
+                      | titlecase
+                  }}
+                </h6>
+              </div>
+              <div class="position-relative row">
+                <h5 class="col-sm-3 col-form-label font-weight-bold">
+                  Labour Count
+                </h5>
+
+                <h5 class="col-sm-1 col-form-label font-weight-bold">:</h5>
+                <h6 class="col-sm-8 col-form-label">
+                  {{ orderDeliveryLocation?.labourCount }}
+                </h6>
+              </div>
+              <div class="position-relative row">
+                <h5 class="col-sm-3 col-form-label font-weight-bold">
+                  Consignee Name
+                </h5>
+
+                <h5 class="col-sm-1 col-form-label font-weight-bold">:</h5>
+                <h6 class="col-sm-8 col-form-label">
+                  {{ orderDeliveryLocation?.consigneeName | titlecase }}
+                </h6>
+              </div>
+              <div class="position-relative row">
+                <h5 class="col-sm-3 col-form-label font-weight-bold">
+                  Consignee Number
+                </h5>
+
+                <h5 class="col-sm-1 col-form-label font-weight-bold">:</h5>
+                <h6 class="col-sm-8 col-form-label">
+                  {{
+                    orderDeliveryLocation?.consigneeNotification
+                      ?.consigneeContact?.mobile
+                  }}
+                </h6>
+              </div>
+              <div class="position-relative row">
+                <h5 class="col-sm-3 col-form-label font-weight-bold">
+                  Confirmation OTP
+                </h5>
+
+                <h5 class="col-sm-1 col-form-label font-weight-bold">:</h5>
+                <h6 class="col-sm-8 col-form-label">
+                  {{ orderDeliveryLocation?.confirmationOtp | titlecase }}
+                </h6>
+              </div>
+              <div class="position-relative row">
+                <h5 class="col-sm-3 col-form-label font-weight-bold">
+                  Consignee Signature
+                </h5>
+
+                <h5 class="col-sm-1 col-form-label font-weight-bold">:</h5>
+                <div class="col-sm-6 col-form-label">
+                  <img
+                    (click)="
+                      openImage(orderDeliveryLocation?.consigneeSignatureId)
+                    "
+                    *ngIf="orderDeliveryLocation.consigneeSignatureId"
+                    [src]="
+                      orderDeliveryLocation?.consigneeSignatureId != null
+                        ? getImages(orderDeliveryLocation?.consigneeSignatureId)
+                        : ''
+                    "
+                    alt="{{ orderDeliveryLocation?.consigneeSignatureId }}"
+                    height="100px"
+                    width="200px"
+                    style="border-radius: 10%; cursor: pointer"
+                  />
+                </div>
+                <!-- <div class="col-sm-2 col-form-label px-0 pt-5 pb-0">
+                  <a
+                    [href]="
+                      getImages(orderDeliveryLocation?.consigneeSignatureId)
+                    "
+                    target="_blank"
+                    *ngIf="orderDeliveryLocation.consigneeSignatureId"
+                    >View</a
+                  >
+                </div> -->
+              </div>
+              <div class="position-relative row">
+                <h5 class="col-sm-3 col-form-label font-weight-bold">
+                  POD File
+                </h5>
+
+                <h5 class="col-sm-1 col-form-label font-weight-bold">:</h5>
+                <div class="col-sm-6 col-form-label">
+                  <img
+                    (click)="openImage(orderDeliveryLocation?.podFileId)"
+                    *ngIf="orderDeliveryLocation?.podFileId"
+                    [src]="
+                      orderDeliveryLocation?.podFileId != null
+                        ? getImages(orderDeliveryLocation?.podFileId)
+                        : ''
+                    "
+                    alt="{{ orderDeliveryLocation?.podFileId }}"
+                    style="border-radius: 10%; cursor: pointer"
+                    height="100px"
+                    width="300px"
+                  />
+                </div>
+                <!-- <div class="col-sm-2 col-form-label px-0 pt-5 pb-0">
+                  <a
+                    [href]="getImages(orderDeliveryLocation?.podFileId)"
+                    *ngIf="orderDeliveryLocation?.podFileId"
+                    target="_blank"
+                    >View</a
+                  >
+                </div> -->
+              </div>
+              <div
+                class="position-relative main-card mb-3 card"
+                *ngIf="
+                  orderDeliveryLocation.packages &&
+                  orderDeliveryLocation?.packages?.length > 0
+                "
+              >
+                <div class="card-body border">
+                  <h5 class="card-title">Package(s) Details</h5>
+                  <ng-templete
+                    *ngFor="
+                      let package of orderDeliveryLocation.packages;
+                      let i = index
+                    "
+                  >
+                    <div class="position-relative row">
+                      <h5 class="col-sm-3 col-form-label font-weight-bold">
+                        Description
+                      </h5>
+                      <h5 class="col-sm-1 col-form-label font-weight-bold">
+                        :
+                      </h5>
+                      <h6 class="col-sm-8 col-form-label">
+                        {{ package?.description | titlecase }}
+                      </h6>
+                    </div>
+                    <div class="position-relative row">
+                      <h5 class="col-sm-3 col-form-label font-weight-bold">
+                        Bill Number
+                      </h5>
+                      <h5 class="col-sm-1 col-form-label font-weight-bold">
+                        :
+                      </h5>
+                      <h6 class="col-sm-8 col-form-label">
+                        {{ package?.billNumber }}
+                      </h6>
+                    </div>
+                    <div class="position-relative row">
+                      <h5 class="col-sm-3 col-form-label font-weight-bold">
+                        Amount
+                      </h5>
+                      <h5 class="col-sm-1 col-form-label font-weight-bold">
+                        :
+                      </h5>
+                      <h6 class="col-sm-8 col-form-label">
+                        {{ package?.amount }}
+                      </h6>
+                    </div>
+                    <div class="position-relative row">
+                      <h5 class="col-sm-3 col-form-label font-weight-bold">
+                        Freight Payment
+                      </h5>
+                      <h5 class="col-sm-1 col-form-label font-weight-bold">
+                        :
+                      </h5>
+                      <h6 class="col-sm-8 col-form-label">
+                        {{ package?.freightPayment }}
+                      </h6>
+                    </div>
+                  </ng-templete>
+                </div>
+              </div>
+              <div
+                class="position-relative main-card mb-3 card"
+                *ngIf="orderDeliveryLocation?.timeStats"
+              >
+                <div class="card-body border">
+                  <h5 class="card-title">TimeStats(s) Details</h5>
+                  <div class="position-relative row">
+                    <h5 class="col-sm-3 col-form-label font-weight-bold">
+                      Stats Type
+                    </h5>
+                    <h5 class="col-sm-1 col-form-label font-weight-bold">:</h5>
+                    <h6 class="col-sm-8 col-form-label">
+                      {{
+                        orderDeliveryLocation?.timeStats?.type?.toString()
+                          | titlecase
+                      }}
+                    </h6>
+                  </div>
+                  <div class="position-relative row">
+                    <h5 class="col-sm-3 col-form-label font-weight-bold">
+                      Arrival Time
+                    </h5>
+                    <h5 class="col-sm-1 col-form-label font-weight-bold">:</h5>
+                    <h6
+                      class="col-sm-8 col-form-label"
+                      *ngIf="
+                        orderDeliveryLocation.timeStats &&
+                        orderDeliveryLocation.timeStats.arrivalTime > 0
+                      "
+                    >
+                      {{
+                        getDate(orderDeliveryLocation?.timeStats?.arrivalTime)
+                          | date: "medium"
+                      }}
+                    </h6>
+                  </div>
+                  <div class="position-relative row">
+                    <h5 class="col-sm-3 col-form-label font-weight-bold">
+                      Work Start Time
+                    </h5>
+                    <h5 class="col-sm-1 col-form-label font-weight-bold">:</h5>
+                    <h6
+                      class="col-sm-8 col-form-label"
+                      *ngIf="
+                        orderDeliveryLocation.timeStats &&
+                        orderDeliveryLocation.timeStats.workStart > 0
+                      "
+                    >
+                      {{
+                        getDate(orderDeliveryLocation?.timeStats?.workStart)
+                          | date: "medium"
+                      }}
+                    </h6>
+                  </div>
+                  <div class="position-relative row">
+                    <h5 class="col-sm-3 col-form-label font-weight-bold">
+                      Work End Time
+                    </h5>
+                    <h5 class="col-sm-1 col-form-label font-weight-bold">:</h5>
+                    <h6
+                      class="col-sm-8 col-form-label"
+                      *ngIf="
+                        orderDeliveryLocation.timeStats &&
+                        orderDeliveryLocation.timeStats.workEnd > 0
+                      "
+                    >
+                      {{
+                        getDate(orderDeliveryLocation?.timeStats?.workEnd)
+                          | date: "medium"
+                      }}
+                    </h6>
+                  </div>
+                </div>
+              </div>
+
+              <div
+                class="position-relative main-card mb-3 card"
+                *ngIf="orderDeliveryLocation?.charges"
+              >
+                <div class="card-body border">
+                  <h5 class="card-title">Freight Charge Details</h5>
+                  <div class="position-relative row">
+                    <h5 class="col-sm-3 col-form-label font-weight-bold">
+                      Amount
+                    </h5>
+                    <h5 class="col-sm-1 col-form-label font-weight-bold">:</h5>
+                    <h6 class="col-sm-8 col-form-label">
+                      {{ orderDeliveryLocation?.charges?.amount }}
+                    </h6>
+                  </div>
+                  <div class="position-relative row">
+                    <h5 class="col-sm-3 col-form-label font-weight-bold">
+                      Extra Charges
+                    </h5>
+                    <h5 class="col-sm-1 col-form-label font-weight-bold">:</h5>
+                    <h6 class="col-sm-8 col-form-label">
+                      {{ orderDeliveryLocation?.charges?.extra }}
+                    </h6>
+                  </div>
+                  <div class="position-relative row">
+                    <div
+                      class="position-relative main-card mb-3 card"
+                      *ngIf="orderDeliveryLocation?.charges?.haltCharge"
+                    >
+                      <div class="card-body border">
+                        <h5 class="card-title">Halt Charge Details</h5>
+                        <div class="position-relative row">
+                          <h5 class="col-sm-3 col-form-label font-weight-bold">
+                            Charge
+                          </h5>
+                          <h5 class="col-sm-1 col-form-label font-weight-bold">
+                            :
+                          </h5>
+                          <h6 class="col-sm-8 col-form-label">
+                            {{
+                              orderDeliveryLocation?.charges?.haltCharge.charge
+                            }}
+                          </h6>
+                        </div>
+                        <div class="position-relative row">
+                          <h5 class="col-sm-3 col-form-label font-weight-bold">
+                            Reason
+                          </h5>
+                          <h5 class="col-sm-1 col-form-label font-weight-bold">
+                            :
+                          </h5>
+                          <h6 class="col-sm-8 col-form-label">
+                            {{
+                              orderDeliveryLocation?.charges?.haltCharge.reason
+                                | titlecase
+                            }}
+                          </h6>
+                        </div>
+                        <div class="position-relative row">
+                          <div
+                            class="position-relative main-card mb-3 card"
+                            *ngIf="
+                              orderDeliveryLocation?.charges?.haltCharge
+                                ?.duration
+                            "
+                          >
+                            <div class="card-body border">
+                              <h5 class="card-title">Halt Duration</h5>
+                              <div class="position-relative row">
+                                <h5
+                                  class="col-sm-3 col-form-label font-weight-bold"
+                                >
+                                  Halt Duration
+                                </h5>
+                                <h5
+                                  class="col-sm-1 col-form-label font-weight-bold"
+                                >
+                                  :
+                                </h5>
+                                <h6 class="col-sm-8 col-form-label">
+                                  {{
+                                    getHaltDuration(
+                                      orderDeliveryLocation?.charges?.haltCharge
+                                        ?.duration
+                                    )
+                                  }}
+                                </h6>
+                              </div>
+                              <div class="position-relative row">
+                                <h5
+                                  class="col-sm-3 col-form-label font-weight-bold"
+                                >
+                                  Start Time
+                                </h5>
+                                <h5
+                                  class="col-sm-1 col-form-label font-weight-bold"
+                                >
+                                  :
+                                </h5>
+                                <h6 class="col-sm-8 col-form-label">
+                                  {{
+                                    getDate(
+                                      orderDeliveryLocation?.charges?.haltCharge
+                                        ?.duration?.startTimeInMillis
+                                    ) | date: "medium"
+                                  }}
+                                </h6>
+                              </div>
+                              <div class="position-relative row">
+                                <h5
+                                  class="col-sm-3 col-form-label font-weight-bold"
+                                >
+                                  End Time
+                                </h5>
+                                <h5
+                                  class="col-sm-1 col-form-label font-weight-bold"
+                                >
+                                  :
+                                </h5>
+                                <h6 class="col-sm-8 col-form-label">
+                                  {{
+                                    getDate(
+                                      orderDeliveryLocation?.charges?.haltCharge
+                                        ?.duration?.endTimeInMillis
+                                    ) | date: "medium"
+                                  }}
+                                </h6>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </ng-templete>
+        </div>
+      </div>
+
+      <div class="position-relative main-card mb-3 card">
+        <div class="card-body border">
+          <h5 class="card-title">Payment Details</h5>
+          <div class="row position-relative">
+            <h5 class="col-sm-3 col-form-label font-weight-bold">
+              Total Amount (including all taxes)
+            </h5>
+            <h5 class="col-sm-1 col-form-label font-weight-bold">:</h5>
+            <h6 class="col-sm-8 col-form-label">
+              {{ orderInvoice.paymentDetail?.totalAmount }}
+            </h6>
+          </div>
+          <div class="row position-relative">
+            <h5 class="col-sm-3 col-form-label font-weight-bold">
+              Remaining Amount (if any)
+            </h5>
+            <h5 class="col-sm-1 col-form-label font-weight-bold">:</h5>
+            <h6 class="col-sm-8 col-form-label">
+              {{ orderInvoice.paymentDetail?.remainingAmount }}
+            </h6>
+          </div>
+          <div class="row position-relative">
+            <h5 class="col-sm-3 col-form-label font-weight-bold">
+              Freight Charge
+            </h5>
+            <h5 class="col-sm-1 col-form-label font-weight-bold">:</h5>
+            <h6 class="col-sm-8 col-form-label">
+              {{ orderInvoice.paymentDetail?.freightCharge }}
+            </h6>
+          </div>
+          <div class="row position-relative">
+            <h5 class="col-sm-3 col-form-label font-weight-bold">GST Amount</h5>
+            <h5 class="col-sm-1 col-form-label font-weight-bold">:</h5>
+            <h6 class="col-sm-8 col-form-label">
+              {{ orderInvoice.paymentDetail?.gstTax }}
+            </h6>
+          </div>
+          <div class="row position-relative">
+            <h5 class="col-sm-3 col-form-label font-weight-bold">
+              Total Freight Amount (including GST)
+            </h5>
+            <h5 class="col-sm-1 col-form-label font-weight-bold">:</h5>
+            <h6 class="col-sm-8 col-form-label">
+              {{
+                orderInvoice.paymentDetail?.freightCharge +
+                  orderInvoice.paymentDetail?.gstTax
+              }}
+            </h6>
+          </div>
+          <div class="row position-relative">
+            <h5 class="col-sm-3 col-form-label font-weight-bold">
+              Driver Fare
+            </h5>
+            <h5 class="col-sm-1 col-form-label font-weight-bold">:</h5>
+            <h6 class="col-sm-8 col-form-label">
+              {{ orderInvoice.paymentDetail?.driverFare }}
+            </h6>
+          </div>
+          <div class="row position-relative">
+            <h5 class="col-sm-3 col-form-label font-weight-bold">
+              Diesel Amount
+            </h5>
+            <h5 class="col-sm-1 col-form-label font-weight-bold">:</h5>
+            <h6 class="col-sm-8 col-form-label">
+              {{ orderInvoice.paymentDetail?.dieselFare }}
+            </h6>
+          </div>
+          <div class="row position-relative">
+            <h5 class="col-sm-3 col-form-label font-weight-bold">
+              Advance Amount
+            </h5>
+            <h5 class="col-sm-1 col-form-label font-weight-bold">:</h5>
+            <h6 class="col-sm-8 col-form-label">
+              {{ orderInvoice.paymentDetail?.advance }}
+            </h6>
+          </div>
+          <div class="row position-relative">
+            <h5 class="col-sm-3 col-form-label font-weight-bold">TDS Amount</h5>
+            <h5 class="col-sm-1 col-form-label font-weight-bold">:</h5>
+            <h6 class="col-sm-8 col-form-label">
+              {{ orderInvoice.paymentDetail?.tdsAmount }}
+            </h6>
+          </div>
+          <div class="row position-relative">
+            <h5 class="col-sm-3 col-form-label font-weight-bold">
+              Halt Time Charge (If any)
+            </h5>
+            <h5 class="col-sm-1 col-form-label font-weight-bold">:</h5>
+            <h6 class="col-sm-8 col-form-label">
+              {{ orderInvoice.paymentDetail?.haltTimeCharge }}
+            </h6>
+          </div>
+          <div class="row position-relative">
+            <h5 class="col-sm-3 col-form-label font-weight-bold">
+              Toll Charge(s) (If any)
+            </h5>
+            <h5 class="col-sm-1 col-form-label font-weight-bold">:</h5>
+            <h6 class="col-sm-8 col-form-label">
+              {{ orderInvoice.paymentDetail?.tollAmount }}
+            </h6>
+          </div>
+          <div class="row position-relative">
+            <h5 class="col-sm-3 col-form-label font-weight-bold">
+              Labour Charge (If any)
+            </h5>
+            <h5 class="col-sm-1 col-form-label font-weight-bold">:</h5>
+            <h6 class="col-sm-8 col-form-label">
+              {{ orderInvoice.paymentDetail?.labourCharge }}
+            </h6>
+          </div>
+          <div class="row position-relative">
+            <h5 class="col-sm-3 col-form-label font-weight-bold">
+              Fine (If any)
+            </h5>
+            <h5 class="col-sm-1 col-form-label font-weight-bold">:</h5>
+            <h6 class="col-sm-8 col-form-label">
+              {{ orderInvoice.paymentDetail?.fine }}
+            </h6>
+          </div>
+          <div class="row position-relative">
+            <h5 class="col-sm-3 col-form-label font-weight-bold">
+              Discount (If any)
+            </h5>
+            <h5 class="col-sm-1 col-form-label font-weight-bold">:</h5>
+            <h6 class="col-sm-8 col-form-label">
+              {{ orderInvoice.paymentDetail?.discount }}
+            </h6>
+          </div>
+          <div class="row position-relative">
+            <h5 class="col-sm-3 col-form-label font-weight-bold">
+              Remark (If any)
+            </h5>
+            <h5 class="col-sm-1 col-form-label font-weight-bold">:</h5>
+            <h6 class="col-sm-8 col-form-label">
+              {{ orderInvoice.paymentDetail?.remark | titlecase }}
+            </h6>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

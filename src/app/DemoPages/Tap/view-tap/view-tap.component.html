@@ -1,0 +1,98 @@
+<div class="main-card mb-3 card" *ngIf="!isLoading">
+  <div class="card-body">
+    <div class="position-relative row">
+      <div class="col-sm-6">
+        <h5 class="card-title">
+          <b> {{ business.businessName | titlecase }}</b>
+        </h5>
+      </div>
+      <div class="col-sm-6 float-right">
+        <a
+          style="cursor: pointer"
+          [routerLink]="['../../vehicle/list-vehicle']"
+          fragment="{{ business.id }}"
+          class="mb-2 mr-2 btn btn-outline-primary float-sm-right float-md-right float-lg-right float-xl-right"
+          >View Vehicle</a
+        >
+        <a
+          style="cursor: pointer"
+          [routerLink]="['../../vehicle/add-vehicle']"
+          fragment="{{ business.id }}"
+          class="mb-2 mr-2 btn btn-outline-primary float-sm-right float-md-right float-lg-right float-xl-right"
+          >Add Vehicle</a
+        >
+          <a style="cursor: pointer;" (click)="addManager()"
+            class="mb-2 mr-2 btn btn-outline-primary float-sm-right float-md-right float-lg-right float-xl-right">Add Manager</a>
+        <a
+          style="cursor: pointer"
+          (click)="editTap()"
+          class="mb-2 mr-2 btn btn-outline-primary float-sm-right float-md-right float-lg-right float-xl-right"
+          >Edit
+        </a>
+      </div>
+    </div>
+    <form>
+      <div class="position-relative row">
+        <h5 class="col-sm-3 col-form-label font-weight-bold">Contact Number</h5>
+        <h5 class="col-sm-1 col-form-label font-weight-bold">:</h5>
+        <h6 class="col-sm-8 col-form-label">
+          {{ business.contact?.mobile }}
+        </h6>
+      </div>
+      <div class="position-relative row">
+        <h5 class="col-sm-3 col-form-label font-weight-bold">Email</h5>
+        <h5 class="col-sm-1 col-form-label font-weight-bold">:</h5>
+        <h6 class="col-sm-8 col-form-label">
+          {{ business.contact?.email }}
+        </h6>
+      </div>
+      <div class="position-relative row">
+        <h5 class="col-sm-3 col-form-label font-weight-bold">GST</h5>
+        <h5 class="col-sm-1 col-form-label font-weight-bold">:</h5>
+        <h6 class="col-sm-8 col-form-label">
+          {{ business.gst }}
+        </h6>
+      </div>
+      <div class="position-relative row">
+        <h5 class="col-sm-3 col-form-label font-weight-bold">Address</h5>
+        <h5 class="col-sm-1 col-form-label font-weight-bold">:</h5>
+        <h6 class="col-sm-8 col-form-label">
+          {{ getAddress(business.address) }}
+        </h6>
+      </div>
+      <div class="position-relative main-card mb-3 card">
+        <div class="card-body border">
+          <h5 class="card-title">Ownership(s) Details</h5>
+          <ng-templete *ngFor="let owner of business.businessOwnerships">
+            <div class="row position-relative">
+              <h5 class="col-sm-3 col-form-label font-weight-bold">Name</h5>
+              <h5 class="col-sm-1 col-form-label font-weight-bold">:</h5>
+              <h6 class="col-sm-8 col-form-label">
+                {{ owner?.profileRef?.name | titlecase }}
+              </h6>
+            </div>
+            <div class="row position-relative">
+              <h5 class="col-sm-3 col-form-label font-weight-bold">
+                Designation
+              </h5>
+              <h5 class="col-sm-1 col-form-label font-weight-bold">:</h5>
+              <h6 class="col-sm-8 col-form-label">
+                {{ getDesignation(owner?.designation) | titlecase }}
+              </h6>
+            </div>
+            <div class="row position-relative">
+              <h5 class="col-sm-3 col-form-label font-weight-bold">
+                Contact Number
+              </h5>
+              <h5 class="col-sm-1 col-form-label font-weight-bold">:</h5>
+              <h6 class="col-sm-8 col-form-label">
+                {{ getMobileNumber(owner?.profileRef?.id) }}
+              </h6>
+            </div>
+            <div class="divider"></div>
+          </ng-templete>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

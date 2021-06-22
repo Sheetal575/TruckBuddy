@@ -1,0 +1,411 @@
+<div
+  [class]="'app-sidebar sidebar-shadow ' + (config$ | async).sidebarTheme"
+  (mouseover)="sidebarHover()"
+  (mouseout)="sidebarHover()"
+>
+  <div class="app-header__logo">
+    <div class="logo-src"></div>
+    <div class="header__pane ml-auto">
+      <button
+        type="button"
+        class="hamburger close-sidebar-btn hamburger--elastic"
+        [ngClass]="{ 'is-active': globals.toggleSidebar }"
+        (click)="toggleSidebar()"
+      >
+        <span class="hamburger-box">
+          <span class="hamburger-inner"></span>
+        </span>
+      </button>
+    </div>
+  </div>
+  <div class="app-sidebar-content">
+    <div class="app-sidebar-scroll">
+      <perfect-scrollbar [autoPropagation]="true">
+        <div class="v-sidebar-menu vsm-default">
+          <div class="vsm-list">
+            <ngb-accordion
+              [destroyOnHide]="false"
+              [closeOthers]="true"
+              [activeIds]="extraParameter"
+            >
+              <ngb-panel>
+                <ng-template ngbPanelHeader>
+                  <div style="background-color: aliceblue" class="my-2">
+                    <div class="vsm-header-profile">
+                      {{ loginProfile.fullName | titlecase }}
+                      <i
+                        *ngIf="loginProfile.state == 'VERIFIED'"
+                        aria-hidden="true"
+                        class="fa fa-fw"
+                        title="Verified"
+                        style="color: forestgreen; font-size: 20px"
+                        ></i
+                      >
+                      <i
+                        *ngIf="loginProfile.state == 'PENDING'"
+                        aria-hidden="true"
+                        class="fa fa-fw"
+                        title="Pending"
+                        style="color: grey; font-size: 20px"
+                        ></i
+                      >
+                      <i
+                        *ngIf="loginProfile.state == 'REJECT'"
+                        aria-hidden="true"
+                        class="fa fa-fw"
+                        title="Reject"
+                        style="color: red; font-size: 20px"
+                        ></i
+                      >
+                    </div>
+                    <div class="vsm-header-mobile">
+                      {{ loginProfile.contact.mobile }}
+                    </div>
+                  </div>
+                </ng-template>
+              </ngb-panel>
+              <ngb-panel>
+                <ng-template ngbPanelHeader>
+                  <div class="vsm-header">Main Navigation</div>
+                </ng-template>
+              </ngb-panel>
+              <ngb-panel id="dashboardsMenu">
+                <ng-template ngbPanelHeader>
+                  <button ngbPanelToggle class="vsm-link">
+                    <i class="vsm-icon pe-7s-home"></i>
+                    <span class="vsm-title">Home</span>
+                    <i class="vsm-arrow"></i>
+                  </button>
+                </ng-template>
+                <ng-template ngbPanelContent>
+                  <div class="vsm-dropdown">
+                    <div class="vsm-list">
+                      <div class="vsm-item">
+                        <a
+                          routerLink=""
+                          routerLinkActive="active-item"
+                          [routerLinkActiveOptions]="{ exact: true }"
+                          class="vsm-link"
+                          ><span class="vsm-title">Dashboard</span></a
+                        >
+                      </div>
+                    </div>
+                  </div>
+                </ng-template>
+              </ngb-panel>
+              <ngb-panel
+                id="bookingMenu"
+                *ngIf="accessManageService.isBookingServiceEnabled"
+              >
+                <ng-template ngbPanelHeader>
+                  <button ngbPanelToggle class="vsm-link">
+                    <i class="vsm-icon pe-7s-note"></i>
+                    <span class="vsm-title">Booking</span>
+                    <i class="vsm-arrow"></i>
+                  </button>
+                </ng-template>
+                <ng-template ngbPanelContent>
+                  <div class="vsm-dropdown">
+                    <div class="vsm-list">
+                      <div class="vsm-item">
+                        <a
+                          routerLink="/booking/create-booking"
+                          routerLinkActive="active-item"
+                          [routerLinkActiveOptions]="{ exact: true }"
+                          class="vsm-link"
+                          ><span class="vsm-title">Create New Booking</span></a
+                        >
+                      </div>
+                      <div class="vsm-item">
+                        <a
+                          routerLink=""
+                          routerLinkActive="active-item"
+                          [routerLinkActiveOptions]="{ exact: true }"
+                          class="vsm-link"
+                          ><span class="vsm-title">View Booking</span></a
+                        >
+                      </div>
+                    </div>
+                  </div>
+                </ng-template>
+              </ngb-panel>
+              <ngb-panel
+                id="orderInvoiceMenu"
+                *ngIf="accessManageService.isOrderInvoiceServiceEnabled"
+              >
+                <ng-template ngbPanelHeader>
+                  <button ngbPanelToggle class="vsm-link">
+                    <i class="vsm-icon pe-7s-note"></i>
+                    <span class="vsm-title">Order Invoice</span>
+                    <i class="vsm-arrow"></i>
+                  </button>
+                </ng-template>
+                <ng-template ngbPanelContent>
+                  <div class="vsm-dropdown">
+                    <div class="vsm-list">
+                      <div class="vsm-item">
+                        <a
+                          routerLink="/orderInvoice/list-order-invoice"
+                          routerLinkActive="active-item"
+                          [routerLinkActiveOptions]="{ exact: true }"
+                          class="vsm-link"
+                          ><span class="vsm-title">View Order Invoice</span></a
+                        >
+                      </div>
+                    </div>
+                  </div>
+                </ng-template>
+              </ngb-panel>
+              <ngb-panel
+                id="verificationMenu"
+                *ngIf="accessManageService.isVerificationServiceEnabled"
+              >
+                <ng-template ngbPanelHeader>
+                  <button ngbPanelToggle class="vsm-link">
+                    <i class="vsm-icon pe-7s-note"></i>
+                    <span class="vsm-title">Verification</span>
+                    <i class="vsm-arrow"></i>
+                  </button>
+                </ng-template>
+                <ng-template ngbPanelContent>
+                  <div class="vsm-dropdown">
+                    <div class="vsm-list">
+                      <div class="vsm-item">
+                        <a
+                          routerLink="/vehicle/list-unverified-vehicle"
+                          routerLinkActive="active-item"
+                          [routerLinkActiveOptions]="{ exact: true }"
+                          class="vsm-link"
+                          ><span class="vsm-title">Verify Vehicle</span></a
+                        >
+                      </div>
+                    </div>
+                  </div>
+                </ng-template>
+              </ngb-panel>
+              <ngb-panel
+                id="driverTrackingMenu"
+                *ngIf="accessManageService.isDriverLogServiceEnabled"
+              >
+                <ng-template ngbPanelHeader>
+                  <button ngbPanelToggle class="vsm-link">
+                    <i class="vsm-icon pe-7s-id"></i>
+                    <span class="vsm-title">Driver Tracking</span>
+                    <i class="vsm-arrow"></i>
+                  </button>
+                </ng-template>
+                <ng-template ngbPanelContent>
+                  <div class="vsm-dropdown">
+                    <div class="vsm-list">
+                      <div class="vsm-item">
+                        <a
+                          routerLinkActive="active-item"
+                          routerLink="/driverTrack/loginLogs"
+                          class="vsm-link"
+                          ><span class="vsm-title">View Login Logs</span></a
+                        >
+                      </div>
+                    </div>
+                  </div>
+                </ng-template>
+              </ngb-panel>
+              <ngb-panel
+                id="profileMenu"
+                *ngIf="accessManageService.isProfileServiceEnabled"
+              >
+                <ng-template ngbPanelHeader>
+                  <button ngbPanelToggle class="vsm-link">
+                    <i class="vsm-icon pe-7s-users"></i>
+                    <span class="vsm-title">Profile</span>
+                    <i class="vsm-arrow"></i>
+                  </button>
+                </ng-template>
+                <ng-template ngbPanelContent>
+                  <div class="vsm-dropdown">
+                    <div class="vsm-list">
+                      <div class="vsm-item">
+                        <a
+                          routerLinkActive="active-item"
+                          routerLink="/profile/add-profile"
+                          class="vsm-link"
+                          ><span class="vsm-title">Add Profile</span></a
+                        >
+                      </div>
+                      <div
+                        class="vsm-item"
+                        *ngIf="accessManageService.isListProfileServiceEnabled"
+                      >
+                        <a
+                          routerLinkActive="active-item"
+                          routerLink="/profile/list-profile"
+                          class="vsm-link"
+                          ><span class="vsm-title">View Profiles</span></a
+                        >
+                      </div>
+                    </div>
+                  </div>
+                </ng-template>
+              </ngb-panel>
+              <ngb-panel
+                id="warRoomMenu"
+                *ngIf="accessManageService.isWarRoomServiceEnabled"
+              >
+                <ng-template ngbPanelHeader>
+                  <button ngbPanelToggle class="vsm-link">
+                    <i class="vsm-icon pe-7s-map"></i>
+                    <span class="vsm-title">War Room</span>
+                    <i class="vsm-arrow"></i>
+                  </button>
+                </ng-template>
+                <ng-template ngbPanelContent>
+                  <div class="vsm-dropdown">
+                    <div class="vsm-list">
+                      <div class="vsm-item">
+                        <a
+                          routerLinkActive="active-item"
+                          routerLink="/war-room/war-room"
+                          class="vsm-link"
+                          ><span class="vsm-title">War Room</span></a
+                        >
+                      </div>
+                    </div>
+                  </div>
+                </ng-template>
+              </ngb-panel>
+              <ngb-panel
+                id="businessMenu"
+                *ngIf="accessManageService.isClientServiceEnabled"
+              >
+                <ng-template ngbPanelHeader>
+                  <button ngbPanelToggle class="vsm-link">
+                    <i class="vsm-icon pe-7s-portfolio"></i>
+                    <span class="vsm-title">Client</span>
+                    <i class="vsm-arrow"></i>
+                  </button>
+                </ng-template>
+                <ng-template ngbPanelContent>
+                  <div class="vsm-dropdown">
+                    <div class="vsm-list">
+                      <div class="vsm-item">
+                        <a
+                          routerLinkActive="active-item"
+                          routerLink="/business/add-business"
+                          class="vsm-link"
+                          ><span class="vsm-title">Add Client</span></a
+                        >
+                      </div>
+                      <div class="vsm-item">
+                        <a
+                          routerLinkActive="active-item"
+                          routerLink="/business/list-business"
+                          class="vsm-link"
+                          ><span class="vsm-title">View Client</span></a
+                        >
+                      </div>
+                    </div>
+                  </div>
+                </ng-template>
+              </ngb-panel>
+              <ngb-panel
+                id="tapMenu"
+                *ngIf="accessManageService.isTapServiceEnabled"
+              >
+                <ng-template ngbPanelHeader>
+                  <button ngbPanelToggle class="vsm-link">
+                    <i class="vsm-icon fa fa-truck"></i>
+                    <span class="vsm-title">TAP</span>
+                    <i class="vsm-arrow"></i>
+                  </button>
+                </ng-template>
+                <ng-template ngbPanelContent>
+                  <div class="vsm-dropdown">
+                    <div class="vsm-list">
+                      <div class="vsm-item">
+                        <a
+                          routerLinkActive="active-item"
+                          routerLink="/business/add-business"
+                          class="vsm-link"
+                          ><span class="vsm-title">Add TAP</span></a
+                        >
+                      </div>
+                      <div class="vsm-item">
+                        <a
+                          routerLinkActive="active-item"
+                          routerLink="/tap/list-tap"
+                          class="vsm-link"
+                          ><span class="vsm-title">View TAP</span></a
+                        >
+                      </div>
+                    </div>
+                  </div>
+                </ng-template>
+              </ngb-panel>
+              <ngb-panel
+                id="vehicleMenu"
+                *ngIf="accessManageService.isVehicleServiceEnabled"
+              >
+                <ng-template ngbPanelHeader>
+                  <button ngbPanelToggle class="vsm-link">
+                    <i class="vsm-icon fa fa-truck"></i>
+                    <span class="vsm-title">Vehicle</span>
+                    <i class="vsm-arrow"></i>
+                  </button>
+                </ng-template>
+                <ng-template ngbPanelContent>
+                  <div class="vsm-dropdown">
+                    <div class="vsm-list">
+                      <div class="vsm-item">
+                        <a
+                          routerLinkActive="active-item"
+                          routerLink="/vehicle/add-vehicle"
+                          fragment="{{ businessProfile.id }}"
+                          class="vsm-link"
+                          ><span class="vsm-title">Add Vehicle</span></a
+                        >
+                      </div>
+                      <div class="vsm-item">
+                        <a
+                          routerLinkActive="active-item"
+                          routerLink="/vehicle/list-vehicle"
+                          fragment="{{ businessProfile.id }}"
+                          class="vsm-link"
+                          ><span class="vsm-title">View Vehicles</span></a
+                        >
+                      </div>
+                    </div>
+                  </div>
+                </ng-template>
+              </ngb-panel>
+              <ngb-panel
+                id="reportMenu"
+                *ngIf="accessManageService.isReportServiceEnabled"
+              >
+                <ng-template ngbPanelHeader>
+                  <button ngbPanelToggle class="vsm-link">
+                    <i class="vsm-icon fa fa-book"></i>
+                    <span class="vsm-title">Reports</span>
+                    <i class="vsm-arrow"></i>
+                  </button>
+                </ng-template>
+                <ng-template ngbPanelContent>
+                  <div class="vsm-dropdown">
+                    <div class="vsm-list">
+                      <div class="vsm-item">
+                        <a
+                          routerLinkActive="active-item"
+                          routerLink="/reports/home"
+                          class="vsm-link"
+                          ><span class="vsm-title">All Reports</span></a
+                        >
+                      </div>
+                    </div>
+                  </div>
+                </ng-template>
+              </ngb-panel>
+            </ngb-accordion>
+          </div>
+        </div>
+      </perfect-scrollbar>
+    </div>
+  </div>
+</div>

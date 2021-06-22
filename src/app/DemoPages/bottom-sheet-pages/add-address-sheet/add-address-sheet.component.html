@@ -1,0 +1,73 @@
+<div class="row mb-3" *ngIf="!isLoading">
+  <div class="col-md-12">
+    <div class="main-card mb-3 card">
+      <div class="card-body">
+        <h5 class="card-title" *ngIf="!title" style="text-align: center">
+          Add Address
+        </h5>
+        <h5 class="card-title" *ngIf="title" style="text-align: center">
+          {{ title }}
+        </h5>
+        <form (ngSubmit)="onSubmitAddress()">
+          <div class="position-relative form-group mb-0">
+            <div class="container row d-flex justify-content-center pt-2 mb-0">
+              <div class="form-group required col-md-12 mb-0">
+                <div class="position-relative form-group required">
+                  <label for="localArea" class="control-label">Address</label
+                  ><input
+                    name="localArea"
+                    id="localArea"
+                    placeholder="Enter Address"
+                    type="text"
+                    class="form-control"
+                    [(ngModel)]="address.localArea"
+                  />
+                </div>
+              </div>
+              <div class="form-group required col-md-6 mb-0">
+                <div class="position-relative form-group required">
+                  <label for="state" class="control-label">State</label>
+                  <select
+                    class="form-control"
+                    #state
+                    (change)="onStateChange(state.value)"
+                  >
+                    <option label="--Select State --" selected></option>
+                    <option
+                      *ngFor="let state of states | keyvalue"
+                      value="{{ state.key }}"
+                    >
+                      {{ state.value | titlecase }}
+                    </option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-group required col-md-6 mb-0">
+                <div class="position-relative form-group required">
+                  <label for="city" class="control-label">City</label>
+                  <select
+                    class="form-control"
+                    #city
+                    (change)="onCityChange(city.value)"
+                  >
+                    <option label="--Select City --" selected></option>
+                    <option *ngFor="let city of cities | keyvalue">
+                      {{ city.value | titlecase }}
+                    </option>
+                  </select>
+                </div>
+              </div>
+              <div
+                class="position-relative form-group required col-md-12 d-flex justify-content-center"
+              >
+                <button type="submit" class="mr-2 mb-2 btn btn-primary">
+                  Add Address
+                </button>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

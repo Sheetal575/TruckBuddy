@@ -1,0 +1,52 @@
+<app-page-title
+  [heading]="heading"
+  [subheading]="subheading"
+  [icon]="icon"
+></app-page-title>
+<div class="row mb-3" *ngIf="!isLoading">
+  <div class="col-md-12">
+    <div class="main-card mb-3 card">
+      <div class="card-body" style="display: flex">
+        <h5 class="card-title bold-label col-md-5" style="margin: 0%">
+          {{ profile.fullName | uppercase }} - {{ profile?.contact?.mobile }}
+        </h5>
+        <h5
+          class="card-title bold-label blink_me col-md-5"
+          style="text-align: center; margin: 0%"
+          [ngClass]="getTextColorCss()"
+        >
+          {{ profile?.state?.toString() | uppercase }}
+        </h5>
+        <button
+          *ngIf="profile.state == 'VERIFIED'"
+          style="cursor: pointer"
+          (click)="verifyOrReject(true)"
+          class="mb-2 mr-2 btn btn-outline-danger float-sm-right float-md-right float-lg-right float-xl-right"
+        >
+          REJECT
+        </button>
+        <button
+          *ngIf="profile.state == 'REJECT' || profile.state == 'BLOCKED'"
+          style="cursor: pointer"
+          (click)="verifyOrReject(false)"
+          class="mb-2 mr-2 btn btn-danger float-sm-right float-md-right float-lg-right float-xl-right"
+        >
+          VERIFY
+        </button>
+      </div>
+      <div class="card-body">
+        <h5 class="card-title bold-label" style="text-align: center">
+          Verify Document(s)
+        </h5>
+        <ng-templete *ngFor="let purpose of purposes">
+          <app-document-verification
+            (emitOutput)="afterDocumentVerified($event)"
+            [purpose]="purpose"
+            [profileRefId]="profileRefId"
+            [profileRefName]="profileRefName"
+          ></app-document-verification>
+        </ng-templete>
+      </div>
+    </div>
+  </div>
+</div>

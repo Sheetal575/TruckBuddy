@@ -1,0 +1,117 @@
+<!-- <app-page-title [heading]="heading" [subheading]="subheading" [icon]="icon"></app-page-title> -->
+
+<div fxLayout fxLayoutAlign="center center">
+  <mat-form-field fxFlex="40%">
+    <input
+      matInput
+      type="text"
+      (keyup)="doFilter($event.target.value)"
+      placeholder="Search By Name"
+    />
+  </mat-form-field>
+</div>
+
+<table mat-table [dataSource]="dataSource" matSort matSortStart="desc">
+  <ng-container matColumnDef="name">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Name</th>
+    <td mat-cell *matCellDef="let element">
+      <a
+        style="cursor: pointer"
+        [routerLink]="['../view-profile']"
+        fragment="{{ element.id }}"
+      >
+        {{ element.fullName | titlecase }}
+      </a>
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="type">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Profile Type</th>
+    <td mat-cell *matCellDef="let element">
+      {{ profileTypeFormatter(element.type) | titlecase }}
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="contact">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Contact</th>
+    <td mat-cell *matCellDef="let element">{{ element.contact?.mobile }}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="email">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Email</th>
+    <td mat-cell *matCellDef="let element">
+      {{ element.contact?.email | lowercase }}
+    </td>
+  </ng-container>
+  <ng-container matColumnDef="status">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Profile Status</th>
+    <td mat-cell *matCellDef="let element">
+      {{ element?.state?.toString() | uppercase }}
+    </td>
+  </ng-container>
+  <ng-container matColumnDef="verifyProfile">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Action</th>
+    <td mat-cell *matCellDef="let element">
+      <ng-templete>
+        <a
+          *ngIf="element?.state?.toString() == 'PENDING'"
+          aria-hidden="true"
+          (click)="verifyAndUpdateProfile(element, false)"
+          style="
+            color: rgb(0, 0, 0);
+            cursor: pointer;
+            text-decoration: underline;
+          "
+        >
+          Verify
+        </a>
+        <a
+          *ngIf="element?.state?.toString() == 'VERIFIED'"
+          aria-hidden="true"
+          (click)="verifyAndUpdateProfile(element, false)"
+          style="
+            color: rgb(0, 0, 0);
+            cursor: pointer;
+            text-decoration: underline;
+          "
+        >
+          Update
+        </a>
+        <a
+          *ngIf="
+            element?.state?.toString() == 'REJECT' ||
+            element?.state?.toString() == 'BLOCKED'
+          "
+          aria-hidden="true"
+          (click)="verifyAndUpdateProfile(element, true)"
+          style="color: darkred; cursor: pointer"
+          >Reject / Block
+        </a>
+      </ng-templete>
+    </td>
+  </ng-container>
+  <ng-container matColumnDef="delete">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header >Delete Profile</th>
+    <td mat-cell *matCellDef="let element">
+      <ng-templete>
+        <a
+          *ngIf="loginProfile?.type?.toString() == 'SUPER_ADMIN'"
+          aria-hidden="true"
+          (click)="deleteProfile(element)"
+          style="
+            color: rgb(0, 0, 0);
+            cursor: pointer;
+            text-decoration: underline;
+          "
+        >
+          Delete
+        </a>
+      </ng-templete>
+    </td>
+  </ng-container>
+
+  <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+  <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+</table>
+<mat-paginator [pageSize]="5" [pageSizeOptions]="[5, 10, 15, 20, 25]">
+</mat-paginator>

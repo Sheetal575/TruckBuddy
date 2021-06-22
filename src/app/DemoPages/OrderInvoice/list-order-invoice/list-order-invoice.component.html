@@ -1,0 +1,97 @@
+<div fxLayout fxLayoutAlign="center center">
+  <mat-form-field fxFlex="40%">
+    <input
+      matInput
+      type="text"
+      (keyup)="doFilter($event.target.value)"
+      placeholder="Search By Order"
+    />
+  </mat-form-field>
+  <div class="row px-3 float-right">
+    <a routerLink="">
+      <label class="bold-label">Go Back</label>
+      <i class="px-3 pe-7s-back"> </i>
+    </a>
+  </div>
+</div>
+<div class="mat-elevation-z8">
+  <table mat-table [dataSource]="dataSource" matSort matSortStart="desc">
+    <ng-container matColumnDef="orderId">
+      <th
+        mat-header-cell
+        *matHeaderCellDef
+        mat-sort-header
+        class="left-align-header"
+        class="pl-0"
+      >
+        Order Id
+      </th>
+      <td mat-cell *matCellDef="let element" class="pl-0">
+        {{ element.orderId }}
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="customerName">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Customer Name</th>
+      <td mat-cell *matCellDef="let element">
+        {{ element.customer?.name | titlecase }}
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="vehicleReqNumber">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>
+        Vehicle Registration Number
+      </th>
+      <td mat-cell *matCellDef="let element">
+        {{ element.vehicleDetails?.vehicleRegNo | uppercase }}
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="driverName">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Driver Name</th>
+      <td mat-cell *matCellDef="let element">
+        {{ element.vehicleDetails?.driver?.name | titlecase }}
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="requestedTime">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Created On</th>
+      <td mat-cell *matCellDef="let element">
+        {{ getDate(element?.requestedTime) | date: "medium" }}
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="state">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Status</th>
+      <td mat-cell *matCellDef="let element">
+        {{ element?.state?.toString() | uppercase }}
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="action">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Actions</th>
+      <td mat-cell *matCellDef="let element">
+        <i
+          title="view"
+          [routerLink]="['../view-order-invoice']"
+          fragment="{{ element.id }}"
+          class="pe-7s-look px-2"
+          style="font-size: 20px; color: green; cursor: pointer"
+        >
+        </i>
+        <!-- <i
+          class="fa fa-fw px-2"
+          aria-hidden="true"
+          title="edit"
+          *ngIf="element?.requestStatus == 'AWAITED'"
+          [routerLink]="['../create-booking']"
+          fragment="{{ element.id }}"
+          style="font-size: 20px; color: royalblue; cursor: pointer"
+          ></i
+        > -->
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+  </table>
+
+  <mat-paginator [pageSize]="10" [pageSizeOptions]="[5, 10, 15, 20, 25]">
+  </mat-paginator>
+</div>

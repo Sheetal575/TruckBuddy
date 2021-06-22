@@ -1,0 +1,57 @@
+<div class="form-row">
+  <div class="col-md-12">
+    <div class="position-relative row form-group">
+      <label
+        for="file"
+        class="col-sm-2 col-form-label control-label"
+        *ngIf="!label"
+        >Profile Pic :
+      </label>
+      <label
+        for="file"
+        class="col-sm-2 col-form-label control-label"
+        *ngIf="label"
+        >{{ label +" : "}}
+      </label>
+      <div class="col-sm-6">
+        <input
+          type="file"
+          class="form-control-file"
+          (change)="selectFile($event)"
+        />
+        <small class="form-text text-muted"
+          >(Allowed Files Types : All) <br />
+          (Max File Size : 200kb)
+        </small>
+        <app-form-field-error-display
+          [displayError]="isUploadError"
+          errorMsg="Upload Image"
+        >
+        </app-form-field-error-display>
+        <app-form-field-error-display
+          [displayError]="isFileSizeError"
+          errorMsg="Image size exceeds limit 200kb"
+        >
+        </app-form-field-error-display>
+      </div>
+      <div class="col-sm-1">
+        <button
+          type="button"
+          (click)="uploadFile()"
+          class="mr-2 mb-2 btn btn-primary"
+        >
+          Upload
+        </button>
+      </div>
+      <div class="col-sm-2" *ngIf="isBackButtonRequired">
+        <button
+          type="button"
+          (click)="onBack()"
+          class="mr-2 mb-2 btn btn-secondary"
+        >
+          Back
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,39 @@
+<div class="card m-1">
+  <div class="card-body">
+    <div class="row">
+      <div class="col-lg-3 col-12 my-auto vertical-divider">
+        Vehicle<h5 *ngIf='driverAuth.vehicle'>{{driverAuth.vehicle.name}}</h5>
+      </div>
+      <div class="col-lg-3 col-12 my-auto vertical-divider">
+        Access <h5>{{driverAuth.authEvent}}</h5>
+      </div>
+      <div class="col-lg-3 col-12 my-auto vertical-divider">
+        Time <h6>{{getTime()}}<div style="
+        display: inline;
+          font-size: 14px;
+          font-weight: lighter;
+      ">, {{getDate()}}</div>
+        </h6>
+      </div>
+      <div class="col-lg-3 col-12">
+        <h5 class="btn btn-outline-primary" (click)='openImage(driverAuth.extraDetails[0].refDocId)'> <i
+            class="vsm-icon pe-7s-info m-1"></i><a class="text-right">Odo Meter</a> @
+          {{driverAuth.extraDetails[0].manualReadingEntry}} KM</h5>
+        <h5 class="btn btn-outline-primary" (click)='openImage(driverAuth.proofDocId)'> <i
+            class="vsm-icon pe-7s-user m-1"></i><a class="text-right">Photo</a></h5>
+      </div>
+    </div>
+    <hr>
+    <div class="row">
+      <div class="col-lg-6 col-12 text-primary my-auto"><i class="vsm-icon pe-7s-anchor"></i> Distance from last event
+        {{driverAuth.distanceFromLastEvent/1000}} KM
+      </div>
+      <div class="col-lg-6 col-12 text-primary text-right">
+        <div class=" btn btn-success "><a style="
+          color: white;
+      " [href]='getUrl()' target="_blank"> <i class="vsm-icon pe-7s-map-2"></i> View
+            Location </a></div>
+      </div>
+    </div>
+  </div>
+</div>

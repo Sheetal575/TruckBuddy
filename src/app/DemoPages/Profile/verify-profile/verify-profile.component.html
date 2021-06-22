@@ -1,0 +1,49 @@
+<app-page-title
+  [heading]="heading"
+  [subheading]="subheading"
+  [icon]="icon"
+></app-page-title>
+<div class="row mb-3" *ngIf="!isLoading">
+  <div class="col-md-12">
+    <div class="main-card mb-3 card">
+      <div class="card-body">
+        <h5 class="card-title">Verify Profile</h5>
+        <mat-horizontal-stepper [linear]="true" #stepper>
+          <mat-step>
+            <form
+              [formGroup]="uploadProfilePicForm"
+              (ngSubmit)="onSubmitProfilePic(stepper)"
+            >
+              <ng-template matStepLabel>Upload Profile Pic</ng-template>
+              <app-file-upload
+                (emitImageId)="setProfilePic($event)"
+              ></app-file-upload>
+
+              <div>
+                <div class="form-row">
+                  <button
+                    type="button"
+                    class="mr-2 mb-2 btn btn-primary"
+                    matStepperPrevious
+                  >
+                    Back
+                  </button>
+                  <button type="submit" class="mr-2 mb-2 btn btn-primary">
+                    Save & Next
+                  </button>
+                  <button
+                    type="button"
+                    class="mr-2 mb-2 btn btn-primary"
+                    matStepperNext
+                  >
+                    Skip
+                  </button>
+                </div>
+              </div>
+            </form>
+          </mat-step>
+          </mat-horizontal-stepper>
+      </div>
+    </div>
+  </div>
+</div>

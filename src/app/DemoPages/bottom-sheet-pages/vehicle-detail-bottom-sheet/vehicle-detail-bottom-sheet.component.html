@@ -1,0 +1,142 @@
+<div class="card container" *ngIf="_loading">
+  <div class="row">
+    <span
+      class="d-flex justify-content-center col-6 col-sm-6"
+      style="font-weight: bolder"
+      mat-line
+      >Vehicle Number :</span
+    >
+    <span class="d-flex justify-content-center col-6 col-sm-6" mat-line>{{
+      vehicleLocationLog?.vehicleRef?.name
+    }}</span>
+  </div>
+
+  <div class="row">
+    <span
+      class="d-flex justify-content-center col-6 col-sm-6"
+      style="font-weight: bolder"
+      mat-line
+      >Vehicle Type :</span
+    >
+    <span class="d-flex justify-content-center col-6 col-sm-6" mat-line>{{
+      vehicleType | titlecase
+    }}</span>
+  </div>
+
+  <div class="row">
+    <span
+      class="d-flex justify-content-center col-6 col-sm-6"
+      style="font-weight: bolder"
+      mat-line
+      >Driver Name :</span
+    >
+    <span class="d-flex justify-content-center col-6 col-sm-6" mat-line>{{
+      vehicleLocationLog?.driverRef?.name
+    }}</span>
+  </div>
+
+  <div class="row">
+    <span
+      class="d-flex justify-content-center col-6 col-sm-6"
+      style="font-weight: bolder"
+      mat-line
+      >Driver Number :</span
+    >
+    <span class="d-flex justify-content-center col-6 col-sm-6" mat-line>{{
+      getDriverNumber()
+    }}</span>
+  </div>
+
+  <div class="row">
+    <span
+      class="d-flex justify-content-center col-6 col-sm-6"
+      style="font-weight: bolder"
+      mat-line
+      >Last Location :</span
+    >
+    <span
+      class="d-flex justify-content-center col-6 col-sm-6"
+      style="text-align: center"
+      mat-line
+      >{{ lastLocation }}</span
+    >
+  </div>
+  <div class="row">
+    <span
+      class="d-flex justify-content-center col-6 col-sm-6"
+      style="font-weight: bolder"
+      mat-line
+      >Last Updated Time :</span
+    >
+    <span
+      class="d-flex justify-content-center col-6 col-sm-6"
+      style="text-align: center"
+      mat-line
+      >{{ lastUpdatedTime | date: "medium" }}</span
+    >
+  </div>
+
+  <div class="card container my-2" *ngIf="vehicleRide && vehicleRide.rideStats && false">
+    <div class="card-title bold-label" style="text-align: center">
+      Vehicle Ride Detail
+    </div>
+    <div class="row" *ngIf="vehicleRide.rideStats.startTimeInMillis > 0">
+      <span
+        class="d-flex justify-content-center col-6 col-sm-6"
+        style="font-weight: bolder"
+        mat-line
+        >Ride Start Time :</span
+      >
+      <span class="d-flex justify-content-center col-6 col-sm-6" mat-line>{{
+        getDateAndTime(vehicleRide?.rideStats?.startTimeInMillis)
+          | date: "medium"
+      }}</span>
+    </div>
+    <div class="row" *ngIf="vehicleRide.rideStats.stopTimeInMillis > 0">
+      <span
+        class="d-flex justify-content-center col-6 col-sm-6"
+        style="font-weight: bolder"
+        mat-line
+        >Ride Stop Time :</span
+      >
+      <span class="d-flex justify-content-center col-6 col-sm-6" mat-line>{{
+        getDateAndTime(vehicleRide?.rideStats?.stopTimeInMillis)
+          | date: "medium"
+      }}</span>
+    </div>
+    <div class="row">
+      <span
+        class="d-flex justify-content-center col-6 col-sm-6"
+        style="font-weight: bolder"
+        mat-line
+        >Total Halt Time :</span
+      >
+      <span class="d-flex justify-content-center col-6 col-sm-6" mat-line
+        >{{
+          getDuration(vehicleRide?.rideStats?.totalHaltTimeInMillis)
+        }}
+        </span
+      >
+    </div>
+    <div class="row">
+      <span
+        class="d-flex justify-content-center col-6 col-sm-6"
+        style="font-weight: bolder"
+        mat-line
+        >Total Distance Covered :</span
+      >
+      <span class="d-flex justify-content-center col-6 col-sm-6" mat-line
+        >{{
+          vehicleRide?.rideStats?.totalDistanceCovered / 1000 | number: "1.2-3"
+        }}
+        KM</span
+      >
+    </div>
+  </div>
+  <div class="d-flex justify-content-center">
+    <a (click)="closeBottomSheet($event)" class="btn btn-secondary pb-0">
+      <label class="bold-label">Close</label>
+      <!-- <i class="px-3 fa fa-times-circle"> </i> -->
+    </a>
+  </div>
+</div>

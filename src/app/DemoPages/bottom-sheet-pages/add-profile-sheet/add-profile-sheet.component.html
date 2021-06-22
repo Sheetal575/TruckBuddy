@@ -1,0 +1,98 @@
+<div class="row mb-3">
+  <div class="col-md-12">
+    <div class="main-card mb-3 card">
+      <div class="card-body">
+        <h5 class="card-title" *ngIf="!title" style="text-align: center">Add Profile</h5>
+        <h5 class="card-title" *ngIf="title" style="text-align: center">
+          {{ title | uppercase }}
+        </h5>
+        <div class="position-relative form-group">
+          <div class="container row d-flex justify-content-center pt-2">
+            <input
+              class="form-control pl-3"
+              placeholder="Enter Mobile Number"
+              type="text"
+              style="width: 50%"
+              appNumberOnly
+              autocomplete="off"
+              maxlength="10"
+              [(ngModel)]="mobileNumber"
+            />
+            <button class="btn btn-primary ml-3" (click)="getProfiles()">
+              Find Profile
+            </button>
+          </div>
+        </div>
+        <h5 class="card-title" *ngIf="profiles && profiles.length > 0">
+          Profile(s) found: {{profiles.length}}
+        </h5>
+        <div class="form-row" *ngIf="profiles && profiles.length > 0">
+          <div fxLayout fxLayoutAlign="center center">
+            <mat-form-field fxFlex="40%">
+              <input
+                matInput
+                type="text"
+                (keyup)="doFilter($event.target.value)"
+                placeholder="Search By Name / Number"
+              />
+            </mat-form-field>
+          </div>
+
+          <table
+            mat-table
+            [dataSource]="dataSource"
+            matSort
+            matSortStart="desc"
+          >
+            <ng-container matColumnDef="name">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Name</th>
+              <td mat-cell *matCellDef="let element">
+                  {{ element.fullName | titlecase }}
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="type">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                Profile Type
+              </th>
+              <td mat-cell *matCellDef="let element">
+                {{ profileTypeFormatter(element.type) | titlecase }}
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="contact">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Mobile</th>
+              <td mat-cell *matCellDef="let element">
+                {{ element.contact?.mobile }}
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="action">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Action</th>
+              <td mat-cell *matCellDef="let element">
+                <ng-templete>
+                  <a
+                    aria-hidden="true"
+                    (click)="addProfile(element)"
+                    style="
+                      color: rgb(0, 0, 0);
+                      cursor: pointer;
+                      text-decoration: underline;
+                    "
+                  >
+                    Add Profile
+                  </a>
+                </ng-templete>
+              </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+          </table>
+          <mat-paginator [pageSize]="5" [pageSizeOptions]="[5, 10, 15, 20, 25]">
+          </mat-paginator>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

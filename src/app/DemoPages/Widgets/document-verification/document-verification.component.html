@@ -1,0 +1,214 @@
+<div class="row mb-3">
+  <div class="col-md-12">
+    <div class="card">
+      <div class="card-body pb-0">
+        <h5 class="card-title bold-label">
+          {{ getDocumentPurposeText() | titlecase }}
+        </h5>
+        <div class="form-row">
+          <div
+            class="form-group"
+            *ngIf="!uploadDocument"
+            [ngClass]="documentArchieve ? 'col-md-3' : 'col-md-12'"
+          >
+            <div class="position-relative form-group">
+              <div class="form-row col-md-12 d-flex justify-content-center">
+                <label
+                  for="documentStatus"
+                  class="control-label font-weight-bold"
+                  >Status</label
+                >
+              </div>
+              <label
+                class="form-control font-weight-bold pt-1 blink_me d-flex justify-content-center"
+                [ngClass]="getTextColorCss()"
+                *ngIf="documentArchieve && documentArchieve.status"
+                style="border: none !important"
+                >{{ documentArchieve?.status?.toString() | uppercase }}</label
+              >
+              <label
+                class="form-control font-weight-bold pt-1 blink_me text-warning d-flex justify-content-center"
+                *ngIf="
+                  !documentArchieve ||
+                  (documentArchieve && !documentArchieve.status)
+                "
+                style="border: none !important"
+              >
+                PENDING
+              </label>
+            </div>
+          </div>
+          <div
+            class="form-row"
+            [ngClass]="
+              documentArchieve && documentArchieve.status
+                ? 'col-md-4'
+                : 'col-md-4'
+            "
+            *ngIf="
+              documentArchieve && documentArchieve.fileId && !uploadDocument
+            "
+          >
+            <div class="position-relative col-md-12 form-group">
+              <div class="form-row col-md-12 d-flex justify-content-center">
+                <label
+                  for="documentStatus"
+                  class="control-label font-weight-bold"
+                  >View {{ getDocumentPurposeText() | titlecase }}</label
+                >
+              </div>
+              <div class="form-row col-md-12 d-flex justify-content-center">
+                <img
+                  [src]="getImage(documentArchieve?.fileId)"
+                  width="200px"
+                  height="100px"
+                  (click)="openImage(documentArchieve?.fileId)"
+                  *ngIf="documentArchieve.fileId"
+                  style="cursor: pointer"
+                />
+              </div>
+            </div>
+          </div>
+          <div
+            class="form-row col-md-12"
+            *ngIf="!documentArchieve || uploadDocument"
+          >
+            <div class="position-relative form-group col-md-12">
+              <div
+                class="form-row col-md-12 d-flex justify-content-center"
+                *ngIf="!IsUploadRequired"
+              >
+                <label
+                  for="documentStatus"
+                  class="control-label font-weight-bold"
+                  >{{ "Upload " + getDocumentPurposeText() | titlecase }}</label
+                >
+              </div>
+              <div
+                class="form-row col-md-12 d-flex justify-content-center"
+                *ngIf="!IsUploadRequired"
+              >
+                <a (click)="reUploadRequested()">Click here</a>
+              </div>
+              <app-file-upload
+                [label]="getDocumentPurposeText()"
+                [isBackButtonRequired]="true"
+                (emitBackButton)="onPressedBack(0)"
+                *ngIf="IsUploadRequired"
+                (emitImageId)="setDocumentFileId($event)"
+              ></app-file-upload>
+            </div>
+          </div>
+          <div
+            class="form-group col-md-3"
+            *ngIf="documentArchieve && !uploadDocument"
+          >
+            <div class="position-relative form-group">
+              <div class="form-row col-md-12 d-flex justify-content-center">
+                <label
+                  for="documentStatus"
+                  class="control-label font-weight-bold"
+                  >{{
+                    "Re-upload " + getDocumentPurposeText() + "?" | titlecase
+                  }}</label
+                >
+              </div>
+              <div class="form-row col-md-12 d-flex justify-content-center">
+                <a
+                  (click)="reUploadRequested()"
+                  style="
+                    color: #033c73;
+                    text-decoration: none;
+                    background-color: transparent;
+                    cursor: pointer;
+                  "
+                  >Click here</a
+                >
+              </div>
+            </div>
+          </div>
+          <div
+            class="form-group col-md-2"
+            *ngIf="documentArchieve && !uploadDocument"
+          >
+            <div class="position-relative form-group">
+              <div class="form-row col-md-12 d-flex justify-content-center">
+                <label
+                  for="documentStatus"
+                  class="control-label font-weight-bold"
+                  >Action
+                </label>
+              </div>
+              <div
+                *ngIf="
+                  documentArchieve &&
+                  (documentArchieve.status == 'PENDING' ||
+                    documentArchieve.status == 'REJECTED')
+                "
+                class="form-row col-md-12 d-flex justify-content-center px-0 py-1 m-0"
+              >
+                <button
+                  (click)="verifyOrRejectDocument(true)"
+                  class="btn btn btn-outline-success"
+                >
+                  Verify
+                </button>
+              </div>
+              <div
+                *ngIf="
+                  documentArchieve && documentArchieve.status == 'VERIFIED'
+                "
+                class="form-row col-md-12 d-flex justify-content-center px-0 py-1 m-0"
+              >
+                <button
+                  (click)="verifyOrRejectDocument(true)"
+                  class="btn btn btn-outline-warning"
+                >
+                  Update & Verify
+                </button>
+              </div>
+              <div
+                class="form-row col-md-12 d-flex justify-content-center m-0 px-0 py-1"
+              >
+                <button
+                  (click)="verifyOrRejectDocument(false)"
+                  class="btn btn-outline-danger"
+                >
+                  Reject
+                </button>
+              </div>
+            </div>
+          </div>
+          <div
+            class="col-md-10 d-flex justify-content-end form-row"
+            *ngIf="uploadDocument && IsUploadRequired"
+          >
+            <button
+              type="button"
+              (click)="createOrUpdateDocumentArchive()"
+              class="mr-2 mb-2 btn btn-primary"
+            >
+              Submit
+            </button>
+          </div>
+        </div>
+        <hr />
+        <div class="form-row">
+          <div
+            class="form-group col-md-12 d-flex justify-content-center"
+            *ngIf="
+              documentArchieve && documentArchieve.extraData && !uploadDocument
+            "
+          >
+            <label class="control-label font-weight-bold">
+              Remark : &nbsp;</label
+            >
+            <label>
+              {{ documentArchieve.extraData }}
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

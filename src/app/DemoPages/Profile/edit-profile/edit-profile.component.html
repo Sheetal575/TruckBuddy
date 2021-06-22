@@ -1,0 +1,11 @@
+<div *ngIf="updateProfile">
+  <app-add-profile [mobile]="mobile" [type]="type"
+  (outputEmitter)="afterProfileCreation($event)">
+</app-add-profile>
+<div class="d-flex justify-content-center">
+  <a (click)="closeBottomSheet($event)" class="btn btn-secondary pb-0">
+    <label class="bold-label">Close</label>
+    <!-- <i class="px-3 fa fa-times-circle"> </i> -->
+  </a>
+</div>
+</div>

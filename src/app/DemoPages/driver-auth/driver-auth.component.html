@@ -1,0 +1,21 @@
+<div class="card" style="box-shadow: 0px 1px 2px 0px black;z-index: 2;">
+  <div class="card-body">
+    <h5 class="card-title">Search Driver Login Logs</h5>
+    <div class="input-group mb-3">
+      <input type="text" class="form-control m-1" [(ngModel)]='driverMobile' placeholder="Driver's Mobile Number">
+      <input matInput [ngxMatDatetimePicker]="pickerFrom" name="fromDate" id="fromDate" placeholder='Select From Date' type="text"
+        class="form-control m-1" disabled="false" [(ngModel)]="fromDate" autocomplete="off"
+        (click)="pickerFrom.open()" />
+      <ngx-mat-datetime-picker #pickerFrom touchUi="true" enableMeridian="true"> </ngx-mat-datetime-picker>
+      <input matInput [ngxMatDatetimePicker]="pickerTo" name="toDate" id="toDate" placeholder="Select Till Date" type="text"
+        class="form-control m-1" disabled="false" [(ngModel)]="toDate" autocomplete="off" (click)="pickerTo.open()" />
+      <ngx-mat-datetime-picker #pickerTo touchUi="true" enableMeridian="true"> </ngx-mat-datetime-picker>
+      <div class="input-group-append">
+        <button class="btn btn-primary" type="submit" (click)='onSearch()'>Search</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div style="height: 60vh;overflow-y: auto;">
+  <app-driver-auth-tile *ngFor='let driverAuth of driverAuthList' [driverAuth] = 'driverAuth'></app-driver-auth-tile>
+</div>

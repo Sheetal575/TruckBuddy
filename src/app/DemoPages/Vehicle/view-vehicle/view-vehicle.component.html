@@ -1,0 +1,120 @@
+<div class="main-card mb-3 card" *ngIf="!isLoading">
+  <div class="card-body">
+    <div class="position-relative row">
+      <div class="col-sm-6">
+        <h5 class="card-title"><b>
+            {{ vehicleInfo.detail.regNumber|uppercase}}</b></h5>
+      </div>
+      <div class="col-sm-6 float-right">
+      <!--   <a style="cursor: pointer;" [routerLink]="['../../vehicle/list-vehicle']" fragment="{{ business.id }}"
+          class="mb-2 mr-2 btn btn-outline-primary float-sm-right float-md-right float-lg-right float-xl-right">View
+          Vehicle</a>-->
+        <!-- <a style="cursor: pointer;" [routerLink]="['../../vehicle/add-vehicle']" fragment="{{ business.id }}"
+          class="mb-2 mr-2 btn btn-outline-primary float-sm-right float-md-right float-lg-right float-xl-right">Add
+          Vehicle</a> -->
+      </div> 
+    </div>
+    <form>
+      <div class="position-relative row">
+        <h5 class="col-sm-3 col-form-label font-weight-bold">Status</h5>
+        <h5 class="col-sm-1 col-form-label font-weight-bold">:</h5>
+        <h6 class="col-sm-8 col-form-label">
+          {{ getVehicleStatus(vehicleInfo.status) | titlecase}}
+        </h6>
+      </div>
+      <div class="position-relative  row">
+        <h5 class="col-sm-3 col-form-label font-weight-bold">Service Type</h5>
+        <h5 class="col-sm-1 col-form-label font-weight-bold">:</h5>
+        <h6 class="col-sm-8 col-form-label">
+          {{ getVehicleServiceType(vehicleInfo.serviceType) | titlecase}}
+        </h6>
+      </div>
+      <div class="position-relative  row">
+        <h5 class="col-sm-3 col-form-label font-weight-bold">Vehicle Category</h5>
+        <h5 class="col-sm-1 col-form-label font-weight-bold">:</h5>
+        <h6 class="col-sm-8 col-form-label">
+          {{ vehicleCategoryName | titlecase}}
+        </h6>
+      </div>
+      <div class="position-relative  row mb-3">
+        <h5 class="col-sm-3 col-form-label font-weight-bold">Driver</h5>
+        <h5 class="col-sm-1 col-form-label font-weight-bold">:</h5>
+        <div class="col-sm-8 col-form-label py-0 pl-3">
+          <div style="display: flex;" [hidden]="isDriverLinked">
+            <input name="mobile" id="mobile" placeholder="Enter Driver Mobile Number" type="text" class="form-control"
+              appNumberOnly maxlength="10" [(ngModel)]="mobile">
+            <h6 class="container py-2">
+              <u><a (click)="linkDriver()" class="anchor-css" style="color: darkblue;">Link Driver</a></u>
+              <!-- {{ vehicleInfo.driverRef?.name | titlecase}} -->
+            </h6>
+          </div>
+          <div style="display: flex;" [hidden]="!isDriverLinked">
+            {{ vehicleInfo.driverRef?.name | titlecase}}
+            <h6 class="container py-2 px-0">
+              <u><a (click)="removeDriver()" class="anchor-css" style="color: red;">Remove Driver</a></u>
+              <!-- {{ vehicleInfo.driverRef?.name | titlecase}} -->
+            </h6>
+          </div>
+        </div>
+      </div>
+      <div class="position-relative main-card mb-3 card">
+        <div class="card-body border">
+          <h5 class="card-title">TAP Details</h5>
+          <div class="row position-relative ">
+            <h5 class="col-sm-3 col-form-label font-weight-bold">Name</h5>
+            <h5 class="col-sm-1 col-form-label font-weight-bold">:</h5>
+            <h6 class="col-sm-8 col-form-label">
+              {{ vehicleInfo?.tapInfo?.name | titlecase}}
+            </h6>
+          </div>
+          <div class="row position-relative ">
+            <h5 class="col-sm-3 col-form-label font-weight-bold">Type</h5>
+            <h5 class="col-sm-1 col-form-label font-weight-bold">:</h5>
+            <h6 class="col-sm-8 col-form-label">
+              {{ getTapType(vehicleInfo?.tapInfo?.type?.toString()) | uppercase }}
+            </h6>
+          </div>
+        </div>
+      </div>
+
+      <div class="position-relative main-card mb-3 card">
+        <div class="card-body border">
+          <h5 class="card-title">Document(s) Validation</h5>
+          <div class="row position-relative ">
+            <h5 class="col-sm-3 col-form-label font-weight-bold">Insurance</h5>
+            <h5 class="col-sm-1 col-form-label font-weight-bold">:</h5>
+            <h6 class="col-sm-8 col-form-label">
+              {{ vehicleInfo?.detail?.insuranceInfo?.endDate | titlecase}}
+            </h6>
+          </div>
+          <div class="row position-relative ">
+            <h5 class="col-sm-3 col-form-label font-weight-bold">Permit</h5>
+            <h5 class="col-sm-1 col-form-label font-weight-bold">:</h5>
+            <h6 class="col-sm-8 col-form-label">
+              {{ vehicleInfo?.detail?.permitInfo?.endDate | titlecase }}
+            </h6>
+          </div>
+        </div>
+      </div>
+      <div class="position-relative main-card mb-3 card">
+        <div class="card-body border">
+          <h5 class="card-title">Origin Details</h5>
+          <div class="row position-relative ">
+            <h5 class="col-sm-3 col-form-label font-weight-bold">City</h5>
+            <h5 class="col-sm-1 col-form-label font-weight-bold">:</h5>
+            <h6 class="col-sm-8 col-form-label">
+              {{ vehicleInfo?.detail?.originFrom?.city | titlecase}}
+            </h6>
+          </div>
+          <div class="row position-relative ">
+            <h5 class="col-sm-3 col-form-label font-weight-bold">State</h5>
+            <h5 class="col-sm-1 col-form-label font-weight-bold">:</h5>
+            <h6 class="col-sm-8 col-form-label">
+              {{ vehicleInfo?.detail?.originFrom?.state | titlecase}}
+            </h6>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

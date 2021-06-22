@@ -1,0 +1,459 @@
+<app-page-title
+  [heading]="heading"
+  [subheading]="subheading"
+  [icon]="icon"
+></app-page-title>
+<div class="row mb-3" *ngIf="!isLoading">
+  <div class="col-md-12">
+    <div class="main-card mb-3 card">
+      <div class="card-body">
+        <h5 class="card-title">Add / Update Profile</h5>
+        <mat-horizontal-stepper [linear]="true" #stepper>
+          <mat-step [stepControl]="profileForm" state="profileForm">
+            <form
+              [formGroup]="profileForm"
+              (ngSubmit)="onSubmitProfile(stepper)"
+            >
+              <ng-template matStepLabel>Fill out your details</ng-template>
+
+              <div class="form-row" *ngIf="!loadProfileForm">
+                <div
+                  class="form-group required col-md-5"
+                  [formGroup]="profileSearchForm"
+                >
+                  <div class="position-relative form-group required">
+                    <label for="profileType" class="control-label"
+                      >Profile Type</label
+                    >
+                    <select
+                      class="form-control"
+                      matNativeControl
+                      required
+                      formControlName="profileType"
+                    >
+                      <option selected label="--Select Profile Type --"></option>
+                      <option
+                        *ngFor="let profileType of profileTypeList | keyvalue"
+                        value="{{ profileType.key }}"
+                      >
+                        {{ profileType.value }}
+                      </option>
+                    </select>
+                    <mat-error
+                      *ngIf="
+                        profileSearchForm.controls['profileType'].touched &&
+                        profileSearchForm.controls['profileType'].hasError(
+                          'required'
+                        )
+                      "
+                    >
+                      Select Profile Type
+                    </mat-error>
+                  </div>
+                </div>
+                <div
+                  class="form-group required col-md-5"
+                  formGroupName="contact"
+                >
+                  <div class="position-relative form-group required">
+                    <label for="mobile" class="control-label">Mobile</label>
+                    <input
+                      name="mobile"
+                      id="mobile"
+                      placeholder="Enter Mobile"
+                      type="text"
+                      class="form-control"
+                      formControlName="mobile"
+                      appNumberOnly
+                      maxlength="10"
+                    />
+                    <app-form-field-error-display
+                      [displayError]="
+                        isFieldValid(contact, 'mobile', 'required')
+                      "
+                      errorMsg="Mobile Number Required"
+                    >
+                    </app-form-field-error-display>
+                    <app-form-field-error-display
+                      [displayError]="
+                        isFieldValid(contact, 'mobile', 'minlength')
+                      "
+                      errorMsg="Invalid Mobile Number"
+                    >
+                    </app-form-field-error-display>
+                  </div>
+                </div>
+                <div class="form-group col-md-2 pt-1">
+                  <button
+                    type="button"
+                    class="btn btn-primary btn-lg mt-4"
+                    (click)="checkOrCreateProfile()"
+                  >
+                    Proceed
+                  </button>
+                </div>
+              </div>
+              <ng-templete *ngIf="loadProfileForm">
+                <div class="form-row">
+                  <div class="col-md-12">
+                    <div class="position-relative form-group required">
+                      <label for="fullName" class="control-label">Name</label>
+                      <input
+                        name="fullName"
+                        id="fullName"
+                        placeholder="Enter Name"
+                        type="text"
+                        class="form-control"
+                        formControlName="fullName"
+                        appAlphabetOnly
+                        required
+                      />
+                      <app-form-field-error-display
+                        [displayError]="
+                          isFieldValid(profileForm, 'fullName', 'required')
+                        "
+                        errorMsg="Name Required"
+                      >
+                      </app-form-field-error-display>
+                    </div>
+                  </div>
+                  <div
+                    class="form-group required col-md-6"
+                    formGroupName="contact"
+                  >
+                    <div class="position-relative form-group required">
+                      <label for="email" class="control-label">Email</label
+                      ><input
+                        name="email"
+                        id="email"
+                        placeholder="Enter Email"
+                        type="email"
+                        class="form-control"
+                        formControlName="email"
+                      />
+                      <app-form-field-error-display
+                        [displayError]="
+                          isFieldValid(contact, 'email', 'required')
+                        "
+                        errorMsg="Email Required"
+                      >
+                      </app-form-field-error-display>
+                      <app-form-field-error-display
+                        [displayError]="isFieldValid(contact, 'email', 'email')"
+                        errorMsg="Invalid Email"
+                      >
+                      </app-form-field-error-display>
+                      <app-form-field-error-display
+                        [displayError]="
+                          isFieldValid(contact, 'email', 'pattern')
+                        "
+                        errorMsg="Invalid Email"
+                      >
+                      </app-form-field-error-display>
+                    </div>
+                  </div>
+                  <div
+                    class="form-group required col-md-6"
+                    formGroupName="contact"
+                  >
+                    <div class="position-relative form-group required">
+                      <label for="mobile" class="control-label">Mobile</label
+                      ><input
+                        name="mobile"
+                        id="mobile"
+                        placeholder="Enter Mobile"
+                        type="number"
+                        class="form-control"
+                        number="true"
+                        formControlName="mobile"
+                        disabled
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div formGroupName="address">
+                  <div class="position-relative form-group required">
+                    <label for="addressLine1" class="control-label"
+                      >Address Line 1</label
+                    ><input
+                      name="addressLine1"
+                      id="addressLine1"
+                      placeholder="Address Line 1"
+                      type="text"
+                      class="form-control"
+                      formControlName="addressLine1"
+                    />
+                    <app-form-field-error-display
+                      [displayError]="
+                        isFieldValid(address, 'addressLine1', 'required')
+                      "
+                      errorMsg="Address Required"
+                    >
+                    </app-form-field-error-display>
+                  </div>
+                  <div class="form-row">
+                    <div class="col-md-6">
+                      <div class="position-relative form-group required">
+                        <label for="addressLine2">Address Line 2</label
+                        ><input
+                          name="address2"
+                          id="addressLine2"
+                          placeholder="Address Line 2"
+                          type="text"
+                          class="form-control"
+                          formControlName="addressLine2"
+                        />
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="position-relative form-group required">
+                        <label for="landmark">Landmark</label
+                        ><input
+                          name="landmark"
+                          id="landmark"
+                          placeholder="Landmark Area"
+                          type="text"
+                          class="form-control"
+                          formControlName="landmark"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <div class="form-row">
+                    <div class="col-md-5">
+                      <div class="position-relative form-group required">
+                        <label for="state" class="control-label">State</label>
+                        <select
+                          class="form-control"
+                          #state
+                          (change)="onStateChange(state.value)"
+                          value="{{ selectedStateId }}"
+                        >
+                          <option label="--Select State --" selected></option>
+                          <option
+                            *ngFor="let state of states | keyvalue"
+                            value="{{ state.key }}"
+                          >
+                            {{ state.value | titlecase }}
+                          </option>
+                        </select>
+                        <!-- <input
+                          name="state"
+                          id="state"
+                          type="text"
+                          placeholder="State"
+                          class="form-control"
+                          formControlName="state"
+                          appAlphabetOnly
+                        /> -->
+                        <app-form-field-error-display
+                          [displayError]="
+                            isFieldValid(address, 'state', 'required')
+                          "
+                          errorMsg="State Required"
+                        >
+                        </app-form-field-error-display>
+                      </div>
+                    </div>
+                    <div class="col-md-5">
+                      <div class="position-relative form-group required">
+                        <label for="city" class="control-label">City</label>
+                        <input
+                        name="city"
+                        id="city"
+                        type="text"
+                        placeholder="City"
+                        class="form-control"
+                        appAlphabetOnly
+                        disabled
+                        formControlName="city"
+                        *ngIf="!isStateChanged"
+                      />
+                        <select
+                        *ngIf="isStateChanged"
+                          class="form-control"
+                          #city
+                          (change)="onCityChange(city.value)"
+                        >
+                          <option label="--Select City --" selected></option>
+                          <option
+                            *ngFor="let city of cities | keyvalue"
+                            value="{{ city.value }}"
+                          >
+                            {{ city.value | titlecase }}
+                          </option>
+                        </select>
+                        <!-- <input
+                          name="city"
+                          id="city"
+                          type="text"
+                          placeholder="City"
+                          class="form-control"
+                          formControlName="city"
+                          appAlphabetOnly
+                        /> -->
+                        <app-form-field-error-display
+                          [displayError]="
+                            isFieldValid(address, 'city', 'required')
+                          "
+                          errorMsg="City Required"
+                        >
+                        </app-form-field-error-display>
+                      </div>
+                    </div>
+                    <div class="col-md-2">
+                      <div
+                        class="position-relative form-group required required"
+                      >
+                        <label for="zipCode" class="control-label"
+                          >Pincode</label
+                        ><input
+                          name="zipCode"
+                          id="zipCode"
+                          type="text"
+                          placeholder="Zipcode"
+                          class="form-control"
+                          formControlName="zipCode"
+                          maxlength="6"
+                          appNumberOnly
+                        />
+                        <app-form-field-error-display
+                          [displayError]="
+                            isFieldValid(address, 'zipCode', 'required')
+                          "
+                          errorMsg="Pincode Required"
+                        >
+                        </app-form-field-error-display>
+                        <app-form-field-error-display
+                          [displayError]="
+                            isFieldValid(address, 'zipCode', 'minlength')
+                          "
+                          errorMsg="Invalid Pincode"
+                        >
+                        </app-form-field-error-display>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="form-row">
+                  <button
+                    type="button"
+                    (click)="validateAllFormFields(profileForm)"
+                    class="mr-2 mb-2 btn btn-primary"
+                    [disabled]="profileForm.valid"
+                  >
+                    Validate
+                  </button>
+                  <button
+                    type="submit"
+                    [disabled]="!profileForm.valid"
+                    class="mr-2 mb-2 btn btn-primary"
+                  >
+                    Save & Next
+                  </button>
+                </div>
+              </ng-templete>
+            </form>
+          </mat-step>
+          <mat-step>
+            <form
+              [formGroup]="uploadProfilePicForm"
+              (ngSubmit)="onSubmitProfilePic(stepper)"
+            >
+              <ng-template matStepLabel>Upload Profile Pic</ng-template>
+              <app-file-upload
+                (emitImageId)="setProfilePic($event)"
+              ></app-file-upload>
+
+              <div>
+                <div class="form-row">
+                  <button
+                    type="button"
+                    class="mr-2 mb-2 btn btn-primary"
+                    matStepperPrevious
+                  >
+                    Back
+                  </button>
+                  <button type="submit" class="mr-2 mb-2 btn btn-primary">
+                    Save & Next
+                  </button>
+                  <button
+                    type="button"
+                    class="mr-2 mb-2 btn btn-primary"
+                    matStepperNext
+                  >
+                    Skip
+                  </button>
+                </div>
+              </div>
+            </form>
+          </mat-step>
+          <mat-step>
+            <form
+              [formGroup]="createOrUpdateLoginForm"
+              (ngSubmit)="onCreateOrUpdateLoginPassword(stepper)"
+            >
+              <ng-template matStepLabel>Create Login Credential</ng-template>
+              <div class="form-row">
+                <div class="col-md-12">
+                  <div class="position-relative row form-group">
+                    <label
+                      for="profilePic"
+                      class="col-sm-3 col-form-label control-label"
+                      >Create Password:
+                    </label>
+                    <div class="col-sm-9">
+                      <input
+                        name="password"
+                        id="password"
+                        type="text"
+                        placeholder="Enter Password"
+                        class="form-control"
+                        formControlName="password"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <div class="form-row">
+                  <button
+                    type="button"
+                    class="mr-2 mb-2 btn btn-primary"
+                    matStepperPrevious
+                  >
+                    Back
+                  </button>
+                  <button type="submit" class="mr-2 mb-2 btn btn-primary">
+                    Save & Next
+                  </button>
+                  <button
+                    type="button"
+                    class="mr-2 mb-2 btn btn-primary"
+                    matStepperNext
+                  >
+                    Skip
+                  </button>
+                </div>
+              </div>
+            </form>
+          </mat-step>
+          <mat-step>
+            <ng-template matStepLabel>Done</ng-template>
+            <p>You are now done.</p>
+            <div class="form-row">
+              <button
+                type="button"
+                class="mr-2 mb-2 btn btn-primary"
+                (click)="onStepperCompletion(stepper)"
+              >
+                Done
+              </button>
+            </div>
+          </mat-step>
+        </mat-horizontal-stepper>
+      </div>
+    </div>
+  </div>
+</div>

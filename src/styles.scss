@@ -1,0 +1,215 @@
+// Custom Theming for Angular Material
+// For more information: https://material.angular.io/guide/theming
+@import "~@angular/material/theming";
+// Plus imports for other components in your app.
+
+// Include the common styles for Angular Material. We include this here so that you only
+// have to load a single css file for Angular Material in your app.
+// Be sure that you only ever include this mixin once!
+@include mat-core();
+
+// Define the palettes for your theme using the Material Design palettes available in palette.scss
+// (imported above). For each palette, you can optionally specify a default, lighter, and darker
+// hue. Available color palettes: https://material.io/design/color/
+$architectui-angular-free-primary: mat-palette($mat-indigo);
+$architectui-angular-free-accent: mat-palette($mat-pink, A200, A100, A400);
+
+// The warn palette is optional (defaults to red).
+$architectui-angular-free-warn: mat-palette($mat-red);
+
+// Create the theme object (a Sass map containing all of the palettes).
+$architectui-angular-free-theme: mat-light-theme(
+  $architectui-angular-free-primary,
+  $architectui-angular-free-accent,
+  $architectui-angular-free-warn
+);
+
+// Include theme styles for core and each component used in your app.
+// Alternatively, you can import and @include the theme mixins for each component
+// that you are using.
+@include angular-material-theme($architectui-angular-free-theme);
+
+@import "assets/base";
+.mat-stepper-horizontal {
+  margin-top: 8px;
+}
+
+.mat-form-field {
+  margin-top: 16px;
+}
+html,
+body {
+  height: 100%;
+}
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+.form-group.required .control-label:after {
+  content: "*";
+  color: red;
+}
+
+agm-map {
+  height: 500px;
+}
+
+mat-slider {
+  width: 100%;
+}
+
+.mat-button-toggle-checked {
+  background-color: #033c73 !important;
+}
+
+.mat-button-toggle {
+  background-color: inherit;
+  float: left;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  padding: 14px 16px;
+  transition: 0.3s;
+}
+
+.mat-button-toggle:hover {
+  background-color: #ddd;
+}
+
+html,
+body {
+  height: 100%;
+}
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+table {
+  width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  // min-width: 500px;
+}
+th.mat-header-cell {
+  text-align: left;
+  max-width: 300px;
+}
+
+.anchor-css {
+  cursor: pointer;
+  font-size: 85%;
+  color: darkblue;
+}
+
+.bold-label {
+  font-weight: bold;
+}
+
+table {
+  width: 100%;
+}
+.mat-header-row {
+  background-color: #3f51b5;
+  color: white;
+  font-weight: bold;
+}
+
+.mat-header-cell {
+  color: white;
+  font-weight: bold;
+  border-right: solid 0.5px white;
+}
+
+.mat-row:nth-child(odd) {
+  background-color: white;
+}
+
+.mat-row:nth-child(even) {
+  background-color: #d3d3d3;
+}
+.mat-cell {
+  border-right: solid 0.5px black;
+}
+
+.mat-sort-header-container {
+  justify-content: center !important;
+  padding-left: 18px !important; /* Allow for sort icon*/
+}
+
+.mat-cell {
+  text-align: center;
+}
+
+.left-align-cell.mat-cell {
+  text-align: left;
+}
+
+.left-align-header > .mat-sort-header-container {
+  justify-content: flex-start !important;
+  padding-left: 0px !important;
+}
+
+.blink_me {
+  animation: blinker 1s linear infinite;
+}
+
+@keyframes blinker {
+  50% {
+    opacity: 0.3;
+  }
+}
+
+.text-hover-white:hover {
+  color: #fff !important;
+}
+
+.disabled {
+  background: #dddddd;
+}
+.backdropBackground {
+  filter: blur(20px);
+  background-color: grey;
+  opacity: 0.7 !important;
+}
+
+.vsm-header-profile {
+  text-transform: uppercase;
+  font-size: 1rem;
+  font-weight: bold;
+  color: #033c73;
+  white-space: nowrap;
+  position: relative;
+}
+
+.vsm-header-mobile {
+  text-transform: uppercase;
+  font-size: 0.9rem;
+  font-weight: bold;
+  color: #033c73;
+  white-space: nowrap;
+  position: relative;
+}
+
+.vertical-divider {
+  border-right: 1px solid #ced4da;
+}
+
+.transparent_bottom_sheet {
+  background-color: transparent;
+}
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }

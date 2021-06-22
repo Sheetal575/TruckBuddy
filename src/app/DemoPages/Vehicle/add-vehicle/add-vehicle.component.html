@@ -1,0 +1,297 @@
+<app-page-title
+  [heading]="heading"
+  [subheading]="subheading"
+  [icon]="icon"
+></app-page-title>
+<div class="row mb-3" *ngIf="!isLoading">
+  <div class="col-md-12">
+    <div class="main-card mb-3 card">
+      <div class="card-body">
+        <h5 class="card-title">Vehicle Info</h5>
+        <mat-horizontal-stepper [linear]="true" #stepper>
+          <mat-step *ngIf="!vehicleId">
+            <ng-template matStepLabel>Add or Update Vehicle Info</ng-template>
+            <div class="form-row" [formGroup]="vehicleInfoForm">
+              <div class="form-group required col-md-3">
+                <div class="position-relative form-group required">
+                  <label for="serviceType" class="control-label"
+                    >Service Type</label
+                  >
+                  <select
+                    class="form-control"
+                    matNativeControl
+                    required
+                    formControlName="serviceType"
+                  >
+                    <option label="--Select Service Type --" selected></option>
+                    <option
+                      *ngFor="
+                        let serviceType of vehicleServcieTypeList | keyvalue
+                      "
+                      value="{{ serviceType.key }}"
+                    >
+                      {{ serviceType.value }}
+                    </option>
+                  </select>
+                  <mat-error
+                    *ngIf="
+                      vehicleInfoForm.controls['serviceType'].touched &&
+                      vehicleInfoForm.controls['serviceType'].hasError(
+                        'required'
+                      )
+                    "
+                  >
+                    Select Service Type
+                  </mat-error>
+                </div>
+              </div>
+              <div class="form-group required col-md-4">
+                <div class="position-relative form-group required">
+                  <label class="control-label">Vehicle Category</label>
+                  <select
+                    class="form-control"
+                    matNativeControl
+                    required
+                    formControlName="vehCategoryRef"
+                  >
+                    <option
+                      label="--Select Vehicle Category --"
+                      selected
+                    ></option>
+                    <option
+                      *ngFor="let vehicleType of vehicleTypes | keyvalue"
+                      value="{{ vehicleType.key }}"
+                    >
+                      {{ vehicleType.value | titlecase }}
+                    </option>
+                  </select>
+                  <mat-error
+                    *ngIf="
+                      vehicleInfoForm.controls['vehCategoryRef'].touched &&
+                      vehicleInfoForm.controls['vehCategoryRef'].hasError(
+                        'required'
+                      )
+                    "
+                  >
+                    Select Vehicle Category
+                  </mat-error>
+                </div>
+              </div>
+              <div class="form-group required col-md-3">
+                <div
+                  class="position-relative form-group required"
+                  formGroupName="detail"
+                >
+                  <label for="regNumber" class="control-label"
+                    >Registration Number</label
+                  >
+                  <input
+                    name="regNumber"
+                    id="regNumber"
+                    placeholder="Enter Registration Number"
+                    type="text"
+                    class="form-control"
+                    formControlName="regNumber"
+                  />
+                  <app-form-field-error-display
+                    [displayError]="
+                      isFieldValid(
+                        vehicleInfoForm.controls['detail'],
+                        'regNumber',
+                        'required'
+                      )
+                    "
+                    errorMsg="Vehicle Registration Number Required"
+                  >
+                  </app-form-field-error-display>
+                </div>
+              </div>
+              <div class="form-group col-md-2 pt-1">
+                <button
+                  type="button"
+                  class="btn btn-primary btn-lg mt-4"
+                  (click)="checkOrCreateVehicleInfo(stepper)"
+                >
+                  Proceed
+                </button>
+              </div>
+            </div>
+          </mat-step>
+          <mat-step>
+            <form
+              [formGroup]="vehicleInfoForm"
+              (ngSubmit)="onSubmitVehicleInfo(stepper)"
+            >
+              <ng-template matStepLabel
+                >Fill out Vehicle Info Detail</ng-template
+              >
+              <ng-templete>
+                <div class="form-row">
+                  <div class="col-md-12 row">
+                    <div
+                      class="col-md-6 position-relative form-group required"
+                      formGroupName="detail"
+                    >
+                      <label for="regNumber" class="control-label"
+                        >Registration Number</label
+                      >
+                      <input
+                        name="regNumber"
+                        id="regNumber1"
+                        type="text"
+                        class="form-control"
+                        formControlName="regNumber"
+                        disabled
+                      />
+                    </div>
+                    <div class="col-md-6 position-relative form-group required">
+                      <label for="serviceType" class="control-label"
+                        >Service Type</label
+                      >
+                      <input
+                        name="serviceType"
+                        id="serviceType"
+                        type="text"
+                        class="form-control"
+                        formControlName="serviceType"
+                        disabled
+                      />
+                    </div>
+                  </div>
+                  <div
+                    class="form-group required col-md-12"
+                    formGroupName="detail"
+                  >
+                    <div class="form-row" formGroupName="originFrom">
+                      <div class="col-md-6">
+                        <div class="position-relative form-group required">
+                          <label for="state" class="control-label">State</label>
+                          <!-- <input name="state" id="state" type="text"
+                            placeholder="State" class="form-control" formControlName="state" appAlphabetOnly> -->
+                          <select
+                            class="form-control"
+                            #stateSelected
+                            (change)="onStateChange(stateSelected.value)"
+                            value="{{
+                              selectedState(
+                                createOrUpdateVehicleInfo?.detail.originFrom
+                                  .state
+                              )
+                            }}"
+                          >
+                            <option label="--Select State --" selected></option>
+                            <option
+                              *ngFor="let state of states | keyvalue"
+                              value="{{ state.key }}"
+                            >
+                              {{ state.value | titlecase }}
+                            </option>
+                          </select>
+                          <app-form-field-error-display
+                            [displayError]="
+                              isFieldValid(
+                                vehicleInfoForm.controls['detail'].controls[
+                                  'originFrom'
+                                ],
+                                'state',
+                                'required'
+                              )
+                            "
+                            errorMsg="State Required"
+                          >
+                          </app-form-field-error-display>
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="position-relative form-group required">
+                          <label for="city" class="control-label">City</label>
+                          <input
+                            name="city"
+                            id="city"
+                            type="text"
+                            placeholder="City"
+                            class="form-control"
+                            formControlName="city"
+                            appAlphabetOnly
+                            disabled
+                            *ngIf="!isStateChanged"
+                          />
+                          <select
+                            *ngIf="isStateChanged"
+                            class="form-control"
+                            #city
+                            (change)="onCityChange(city.value)"
+                          >
+                            <option label="--Select City --"></option>
+                            <option
+                              *ngFor="let city of cities | keyvalue"
+                              value="{{ city.key }}"
+                            >
+                              {{ city.value | titlecase }}
+                            </option>
+                          </select>
+                          <app-form-field-error-display
+                            [displayError]="
+                              isFieldValid(
+                                vehicleInfoForm.controls['detail'].controls[
+                                  'originFrom'
+                                ],
+                                'city',
+                                'required'
+                              )
+                            "
+                            errorMsg="City Required"
+                          >
+                          </app-form-field-error-display>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="form-row">
+                    <button
+                      type="button"
+                      class="mr-2 mb-2 btn btn-primary"
+                      matStepperPrevious
+                    >
+                      Back
+                    </button>
+                    <button
+                      type="button"
+                      (click)="validateAllFormFields(vehicleInfoForm)"
+                      class="mr-2 mb-2 btn btn-primary"
+                      [disabled]="vehicleInfoForm.valid"
+                    >
+                      Validate
+                    </button>
+                    <button
+                      type="submit"
+                      [disabled]="!vehicleInfoForm.valid"
+                      class="mr-2 mb-2 btn btn-primary"
+                    >
+                      Save
+                    </button>
+                  </div>
+                </div>
+              </ng-templete>
+            </form>
+          </mat-step>
+          <mat-step>
+            <ng-template matStepLabel>Done</ng-template>
+            <p>You are now done.</p>
+            <div>
+              <div class="form-row">
+                <button
+                  type="button"
+                  class="mr-2 mb-2 btn btn-primary"
+                  (click)="onStepperCompletion(stepper)"
+                >
+                  Done
+                </button>
+              </div>
+            </div>
+          </mat-step>
+        </mat-horizontal-stepper>
+      </div>
+    </div>
+  </div>
+</div>

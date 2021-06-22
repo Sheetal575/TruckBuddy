@@ -1,0 +1,154 @@
+<div class="h-100 bg-plum-plate bg-animation">
+  <div class="d-flex h-100 justify-content-center align-items-center">
+    <div class="mx-auto app-login-box col-md-8">
+      <div class="app-logo-inverse mx-auto mb-3"></div>
+      <div class="modal-dialog w-100 mx-auto">
+        <div class="modal-content">
+          <div class="modal-body">
+            <div class="h5 modal-title text-center">
+              <h4 class="mt-2">
+                <div>Welcome back,</div>
+                <span>Please sign in to your account below.</span>
+              </h4>
+            </div>
+            <ng-templete *ngIf="!isProfileFound">
+              <form [formGroup]="profileForm" (ngSubmit)="searchProfile()">
+                <div
+                  id="exampleInputGroup1"
+                  role="group"
+                  aria-describedby="exampleInputGroup1__BV_description_"
+                  class="form-group"
+                >
+                  <div>
+                    <input
+                      type="text"
+                      id="mobile"
+                      name="mobile"
+                      formControlName="mobile"
+                      placeholder="Enter Mobile..."
+                      required="required"
+                      aria-required="true"
+                      class="form-control"
+                      aria-describedby="exampleInputGroup1__BV_description_"
+                      appNumberOnly
+                      maxlength="10"
+                    />
+                    <app-form-field-error-display
+                      [displayError]="
+                        isFieldValid(profileForm, 'mobile', 'required')
+                      "
+                      errorMsg="Mobile Number Required"
+                    >
+                    </app-form-field-error-display>
+                    <app-form-field-error-display
+                      [displayError]="
+                        isFieldValid(profileForm, 'mobile', 'minlength')
+                      "
+                      errorMsg="Invalid Mobile Number"
+                    >
+                    </app-form-field-error-display>
+                    <small
+                      tabindex="-1"
+                      id="exampleInputGroup1__BV_description_"
+                      class="form-text text-muted"
+                      >We'll never share your details with anyone else.
+                    </small>
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <div class="col-4 col-md-4 col-sm-4 required py-2">
+                    <label
+                      for="profileType"
+                      class="bold-label control-label mb-0"
+                      >Profile Type :-<small style="color: red">*</small>
+                    </label>
+                  </div>
+                  <div class="col-6 col-md-6 col-sm-6">
+                    <select
+                      class="form-control"
+                      matNativeControl
+                      required
+                      formControlName="profileType"
+                    >
+                      <option label="--Select Profile Type --"></option>
+                      <option
+                        *ngFor="let profileType of profileTypeList | keyvalue"
+                        value="{{ profileType.key }}"
+                      >
+                        {{ profileType.value }}
+                      </option>
+                    </select>
+                  </div>
+                  <div class="col-2 col-md-2 col-sm-2">
+                    <button
+                      type="submit"
+                      class="btn btn-primary btn-lg"
+                      [disabled]="!profileForm.valid"
+                    >
+                      GO
+                    </button>
+                  </div>
+                </div>
+                <!-- <div class="float-left"><a [routerLink]="" class="btn-lg btn btn-link">Recover
+              Password</a></div> -->
+              </form>
+            </ng-templete>
+            <ng-templete *ngIf="isProfileFound">
+              <form [formGroup]="loginForm" (ngSubmit)="checkLogin()">
+                <div id="exampleInputGroup2" role="group" class="form-group">
+                  <div>
+                    <input
+                      type="password"
+                      id="password"
+                      name="password"
+                      formControlName="password"
+                      placeholder="Enter password..."
+                      required="required"
+                      aria-required="true"
+                      class="form-control"
+                    />
+                    <div
+                      *ngIf="
+                        !password?.valid &&
+                        (password?.dirty || password?.touched)
+                      "
+                    >
+                      <div [hidden]="!firstname.errors.required">
+                        Password is required
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <!-- <div class="custom-control custom-checkbox"><input id="rememberMe" type="checkbox" name="rememberMe"
+                    formControlName="rememberMe" autocomplete="off" class="custom-control-input"><label for="rememberMe"
+                    class="custom-control-label">
+                    Keep me logged in
+                  </label>
+                </div> -->
+                <div class="modal-footer clearfix">
+                  <!-- <div class="float-left"><a [routerLink]="" class="btn-lg btn btn-link">Recover
+              Password</a></div> -->
+                  <div class="float-right">
+                    <a class="mx-5" style="cursor: pointer" (click)="onGoBack()"
+                      ><u>Back</u></a
+                    >
+                    <button
+                      type="submit"
+                      class="btn btn-primary btn-lg"
+                      [disabled]="!loginForm.valid"
+                    >
+                      Login to Dashboard
+                    </button>
+                  </div>
+                </div>
+              </form>
+            </ng-templete>
+          </div>
+        </div>
+      </div>
+      <div class="text-center text-white opacity-8 mt-3">
+        Copyright © TruckBuddy 2020
+      </div>
+    </div>
+  </div>
+</div>

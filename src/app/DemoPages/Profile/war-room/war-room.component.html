@@ -1,0 +1,128 @@
+<app-page-title
+  [heading]="heading"
+  [subheading]="subheading"
+  [icon]="icon"
+></app-page-title>
+<div class="row mb-3">
+  <div class="col-md-12">
+    <div class="main-card mb-3 card">
+      <div class="card-body">
+        <h5 class="card-title">Search By</h5>
+        <div class="position-relative form-group">
+          <div class="container row d-flex justify-content-around">
+            <div class="custom-radio custom-control px-1">
+              <input
+                type="radio"
+                id="exampleCustomRadio"
+                name="customRadio"
+                class="custom-control-input"
+                checked
+                (click)="searchByVehicleNumber(false)"
+              /><label for="exampleCustomRadio" class="custom-control-label"
+                >All Vehicles</label
+              >
+            </div>
+            <div class="custom-radio custom-control px-1">
+              <input
+                type="radio"
+                id="exampleCustomRadio2"
+                name="customRadio"
+                class="custom-control-input"
+                (click)="searchByVehicleNumber(true)"
+                #vehicleNumberRadio
+              /><label
+                for="exampleCustomRadio2"
+                class="custom-control-label px-1"
+                >Vehicle Number</label
+              >
+            </div>
+          </div>
+          <div
+            class="d-flex justify-content-center pt-2"
+            *ngIf="isSearchByVehicleNumber"
+          >
+            <input
+              class="form-control pl-3"
+              id="vehicleNumber"
+              name="vehicleNumber"
+              placeholder="Enter Vehicle Number"
+              type="text"
+              style="width: 50%"
+              [(ngModel)]="vehicleNumber"
+            />
+            <button class="btn btn-primary" (click)="getVehicles()">
+              Search
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="main-card mb-3 card">
+      <div class="card-body">
+        <h5 class="card-title text-center">War Room</h5>
+        <agm-map
+          [latitude]="latitude"
+          [longitude]="longitude"
+          [zoom]="zoom"
+          [disableDefaultUI]="false"
+          [zoomControl]="true"
+        >
+          <ng-container *ngFor="let m of markers; let i = index">
+            <agm-marker
+              [agmFitBounds]="true"
+              (markerClick)="clickedMarker(infowindow, m.content)"
+              [latitude]="m.lat"
+              [longitude]="m.lng"
+              [label]="m.label"
+              [iconUrl]="m.icon"
+            >
+              <!-- <agm-info-window #infowindow class="card d-flex justify-content-center p-2">
+                  <div class="row">
+                    <div class="col-6 col-sm-6 h6">Vehicle Number</div>
+                    <div class="col-6 col-sm-6 ">
+                      {{ vehicleLocationLog?.vehicleRef?.name | uppercase }}
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-6 col-sm-6 h6">Driver Name</div>
+                    <div class="col-6 col-sm-6">
+                      {{ vehicleLocationLog?.driverRef?.name | uppercase }}
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-6 col-sm-6 h6">Last Location</div>
+                    <div class="col-6 col-sm-6">
+                      {{ m.content }}
+                    </div>
+                  </div>
+              </agm-info-window> -->
+            </agm-marker>
+          </ng-container>
+          <!-- <agm-circle
+            [latitude]="radiusLat"
+            [longitude]="radiusLong"
+            [radius]="radius"
+            [fillColor]="'red'"
+            [circleDraggable]="false"
+            [editable]="false"
+          >
+          </agm-circle> -->
+        </agm-map>
+        <div>Latitude: {{ latitude }}</div>
+        <div>Longitude: {{ longitude }}</div>
+        <div>
+          <mat-slider
+            thumbLabel
+            (input)="onDistanceChange($event)"
+            [displayWith]="formatLabel"
+            tickInterval="25"
+            step="10"
+            min="10"
+            max="200"
+          ></mat-slider>
+          <div class="text-center"><label>Distance (in KM)</label></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,92 @@
+<div class="main-card mb-3 card" *ngIf="!isLoading">
+  <div class="card-body">
+    <div class="position-relative row">
+      <div class="col-sm-6">
+        <h5 class="card-title"><b>
+            {{ profile.fullName | titlecase}}</b></h5>
+      </div>
+      <div class="col-sm-6 float-right">
+        <button style="cursor: pointer;" (click)="editProfile()"
+          class="mb-2 mr-2 btn btn-outline-primary float-sm-right float-md-right float-lg-right float-xl-right">Edit</button>
+      </div>
+    </div>
+    <form>
+    <div class="row">
+      <div class="col-8 col-sm-8 col-md-8">
+        <div class="position-relative row">
+          <h5 class="col-sm-3 col-form-label font-weight-bold">Profile Status</h5>
+          <h5 class="col-sm-1 col-form-label font-weight-bold">:</h5>
+          <h6 class="col-sm-8 col-form-label">
+            {{ profileVerificationStateFormatter(profile?.state)}}
+          </h6>
+        </div>
+        <div class="position-relative row">
+          <h5 class="col-sm-3 col-form-label font-weight-bold">Profile Type</h5>
+          <h5 class="col-sm-1 col-form-label font-weight-bold">:</h5>
+          <h6 class="col-sm-8 col-form-label">
+            {{ profileTypeFormatter(profile?.type)}}
+          </h6>
+        </div>
+        <div class="position-relative row">
+          <h5 class="col-sm-3 col-form-label font-weight-bold">Contact Number</h5>
+          <h5 class="col-sm-1 col-form-label font-weight-bold">:</h5>
+          <h6 class="col-sm-8 col-form-label">
+            {{ profile.contact?.mobile}}
+          </h6>
+        </div>
+        <div class="position-relative  row">
+          <h5 class="col-sm-3 col-form-label font-weight-bold">Email</h5>
+          <h5 class="col-sm-1 col-form-label font-weight-bold">:</h5>
+          <h6 class="col-sm-8 col-form-label">
+            {{ profile.contact?.email}}
+          </h6>
+        </div>
+      </div>
+      <div class="col-4 col-sm-4 col-md-4">
+        <img [src]="(image != null)?image:''" alt="{{profile.fullName}}" style="border-radius: 50%;" height="120px"
+        (click)="openImage(profile?.profilePic)">
+      </div>
+    </div>
+      <div class="position-relative main-card mb-3 card">
+        <div class="card-body border">
+          <h5 class="card-title">Address Details</h5>
+            <div class="row position-relative ">
+              <h5 class="col-sm-3 col-form-label font-weight-bold">Address</h5>
+              <h5 class="col-sm-1 col-form-label font-weight-bold">:</h5>
+              <h6 class="col-sm-8 col-form-label">
+                {{profile?.address?.addressLine1 | titlecase}}  {{profile?.address?.addressLine2 | titlecase}}
+              </h6>
+            </div>
+            <div class="row position-relative ">
+              <h5 class="col-sm-3 col-form-label font-weight-bold">Landmark</h5>
+              <h5 class="col-sm-1 col-form-label font-weight-bold">:</h5>
+              <h6 class="col-sm-8 col-form-label">
+                {{ profile?.address?.landmark | titlecase}}
+              </h6>
+            </div>
+            <div class="row position-relative ">
+              <h5 class="col-sm-3 col-form-label font-weight-bold">City</h5>
+              <h5 class="col-sm-1 col-form-label font-weight-bold">:</h5>
+              <h6 class="col-sm-8 col-form-label">
+                {{ profile?.address?.city | titlecase}}
+              </h6>
+            </div>
+            <div class="row position-relative ">
+              <h5 class="col-sm-3 col-form-label font-weight-bold">State</h5>
+              <h5 class="col-sm-1 col-form-label font-weight-bold">:</h5>
+              <h6 class="col-sm-8 col-form-label">
+                {{ profile?.address?.state | titlecase}}
+              </h6>
+            </div>
+            <div class="row position-relative ">
+              <h5 class="col-sm-3 col-form-label font-weight-bold">Pincode</h5>
+              <h5 class="col-sm-1 col-form-label font-weight-bold">:</h5>
+              <h6 class="col-sm-8 col-form-label">
+                {{ profile?.address?.zipCode | titlecase}}
+              </h6>
+            </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

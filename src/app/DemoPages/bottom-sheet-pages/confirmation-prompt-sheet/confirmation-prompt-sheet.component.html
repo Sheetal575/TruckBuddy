@@ -1,0 +1,17 @@
+<h1 mat-dialog-title class="d-flex justify-content-center">Are you sure?</h1>
+<!-- <div
+  mat-dialog-content
+  [ngClass]="!(data && data.isRemarkRequired)?'d-flex justify-content-center':''"
+>
+  <p class="my-0 py-0">Do you want to confirm?</p>
+  <mat-form-field class="my-0 py-0" *ngIf="data && data.isRemarkRequired">
+    <mat-label>Remark: </mat-label>
+    <textarea matInput [(ngModel)]="remark" ></textarea>
+  </mat-form-field>
+</div> -->
+<div mat-dialog-actions class="d-flex justify-content-around">
+  <button mat-button  (click)="onClick(true)">Yes</button>
+  <button mat-button mat-dialog-close cdkFocusInitial (click)="onClick(false)">
+    No
+  </button>
+</div>

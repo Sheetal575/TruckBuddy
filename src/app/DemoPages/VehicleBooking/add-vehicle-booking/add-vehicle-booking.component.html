@@ -1,0 +1,79 @@
+<div class="row mb-3">
+  <div class="col-md-12">
+    <div class="main-card mb-3 card">
+      <div class="card-body">
+        <h5 class="card-title">Assign Request By</h5>
+        <div class="position-relative form-group">
+          <div class="container row d-flex justify-content-around">
+            <div class="custom-radio custom-control px-1">
+              <input
+                type="radio"
+                id="exampleCustomRadio2"
+                checked
+                name="customRadio"
+                class="custom-control-input"
+                (click)="searchByVehicleInfo(false)"
+                #vehicleNumberRadio
+              /><label
+                for="exampleCustomRadio2"
+                class="custom-control-label px-1"
+                >Assignee Mobile Number</label
+              >
+            </div>
+            <div class="custom-radio custom-control px-1">
+              <input
+                type="radio"
+                id="exampleCustomRadio"
+                name="customRadio"
+                class="custom-control-input"
+                [disabled]="!isLCV"
+                (click)="searchByVehicleInfo(true)"
+              /><label for="exampleCustomRadio" class="custom-control-label"
+                >Vehicle Registration Number</label
+              >
+            </div>
+          </div>
+          <div class="d-flex justify-content-center pt-2">
+            <input
+              *ngIf="!isSearchByVehicleNumber"
+              class="form-control pl-3"
+              placeholder="Enter Assignee Mobile Number"
+              type="text"
+              style="width: 50%"
+              appNumberOnly
+              autocomplete="off"
+              maxlength="10"
+              [(ngModel)]="searchText"
+            />
+            <input
+              *ngIf="!isSearchByVehicleNumber"
+              class="form-control pl-3"
+              placeholder="Enter Approval Amount"
+              type="text"
+              style="width: 50%"
+              appNumberOnly
+              autocomplete="off"
+              [(ngModel)]="approvalAmount"
+            />
+            <input
+              *ngIf="isSearchByVehicleNumber"
+              class="form-control pl-3"
+              placeholder="Enter Vehicle Number"
+              type="text"
+              style="width: 50%"
+              autocomplete="off"
+              maxlength="11"
+              [(ngModel)]="searchText"
+            />
+            <button
+              class="btn btn-primary ml-3"
+              (click)="assignVehicleBooking()"
+            >
+              Assign Request
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

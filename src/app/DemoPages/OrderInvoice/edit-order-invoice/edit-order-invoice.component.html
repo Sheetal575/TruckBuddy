@@ -1,0 +1,1579 @@
+<app-page-title
+  [heading]="heading"
+  [subheading]="subheading"
+  [icon]="icon"
+></app-page-title>
+<div class="row mb-3" *ngIf="!isLoading">
+  <div class="col-md-12">
+    <div class="main-card mb-3 card">
+      <div class="card-body">
+        <h5 class="card-title">
+          Update Order Invoice - {{ orderInvoice.orderId }}
+        </h5>
+        <div class="row px-3 float-center">
+          <label><b>Status :-&nbsp;&nbsp;&nbsp;</b></label>
+          <label
+            class="bold-label font-weight-bold blink_me"
+            [ngClass]="getTextColorCss()"
+            >{{ orderInvoice?.state?.toString() | uppercase }}</label
+          >
+        </div>
+        <mat-horizontal-stepper [linear]="false" #stepper>
+          <mat-step>
+            <ng-template matStepLabel>Basic Order Details</ng-template>
+
+            <div class="form-row">
+              <div class="form-group col-md-6">
+                <div class="position-relative form-group">
+                  <label for="orderId" class="control-label">Order Id</label>
+                  <label class="form-control disabled">{{
+                    orderInvoice?.orderId
+                  }}</label>
+                </div>
+              </div>
+              <div class="form-group col-md-5">
+                <div class="position-relative form-group">
+                  <label for="requestedTime" class="control-label"
+                    >Ride Requested Time</label
+                  >
+                  <label
+                    class="form-control disabled"
+                    (click)="requestedTimePicker.open()"
+                    >{{
+                      getDate(orderInvoice?.requestedTime) | date: "medium"
+                    }}</label
+                  >
+                  <input
+                    hidden
+                    matInput
+                    [ngxMatDatetimePicker]="requestedTimePicker"
+                    placeholder="Click to Change Ride Requested Time"
+                    name="requestedTime"
+                    type="text"
+                    class="form-control"
+                    [min]="minDate"
+                    [max]="maxDate"
+                    disabled="false"
+                    [(ngModel)]="requestedTime"
+                    (dateChange)="onChangeRequestedTime()"
+                    autocomplete="off"
+                    (click)="requestedTimePicker.open()"
+                  />
+                </div>
+              </div>
+              <div class="col-md-1 pt-4">
+                <mat-datepicker-toggle
+                  matSuffix
+                  [for]="requestedTimePicker"
+                ></mat-datepicker-toggle>
+                <ngx-mat-datetime-picker
+                  #requestedTimePicker
+                  touchUi="true"
+                  enableMeridian="true"
+                >
+                </ngx-mat-datetime-picker>
+              </div>
+              <div class="form-group col-md-12">
+                <div class="position-relative form-group">
+                  <label for="customerName" class="control-label"
+                    >Customer Name</label
+                  >
+                  <label class="form-control disabled">{{
+                    orderInvoice?.customer?.name | titlecase
+                  }}</label>
+                </div>
+              </div>
+              <!-- <div class="form-group col-md-6">
+                <div class="position-relative form-group">
+                  <label for="mobile" class="control-label"
+                    >Customer Mobile Number</label
+                  >
+                  <label class="form-control disabled">{{
+                    getMobileNumberById(orderInvoice?.customer?.id)
+                  }}</label>
+                </div>
+              </div> -->
+              <div class="form-group col-md-6">
+                <div class="position-relative form-group">
+                  <label for="Consignor" class="control-label"
+                    >Consignor Name</label
+                  >
+                  <input
+                    name="consignorName"
+                    id="consignorName"
+                    placeholder="Add Consignor Name"
+                    type="text"
+                    class="form-control"
+                    [(ngModel)]="orderInvoice.consignorName"
+                    appAlphabetOnly
+                  />
+                </div>
+              </div>
+              <div class="form-group col-md-6">
+                <div class="position-relative form-group">
+                  <label for="consignorMobile" class="control-label"
+                    >Consignor Mobile Number</label
+                  >
+                  <input
+                    name="consignorMobile"
+                    id="consignorMobile"
+                    placeholder="Add Consignor Mobile Number"
+                    type="text"
+                    class="form-control"
+                    [(ngModel)]="orderInvoice.consignorNumber"
+                    appNumberOnly
+                    maxlength="10"
+                  />
+                </div>
+              </div>
+              <div class="col-md-12">
+                <div class="position-relative form-group">
+                  <label for="remark" class="control-label">Remark</label>
+                  <input
+                    name="remark"
+                    id="remark"
+                    placeholder="Add Remark"
+                    type="text"
+                    class="form-control"
+                    [(ngModel)]="orderInvoice.remarks"
+                  />
+                </div>
+              </div>
+            </div>
+            <div class="form-row">
+              <button
+                type="button"
+                class="mr-2 mb-2 btn btn-primary"
+                (click)="updateBasicOrderInvoice(stepper)"
+              >
+                Save & Next
+              </button>
+              <button
+                type="button"
+                class="mr-2 mb-2 btn btn-primary"
+                matStepperNext
+              >
+                Skip
+              </button>
+            </div>
+          </mat-step>
+          <mat-step>
+            <ng-template matStepLabel>Vehicle & Driver Details</ng-template>
+            <div class="form-row">
+              <div class="form-group col-md-6">
+                <div class="position-relative form-group">
+                  <label for="vehicleRegNumber" class="control-label"
+                    >Vehicle Number</label
+                  >
+                  <input
+                    name="vehicleRegNumber"
+                    id="vehicleRegNumber"
+                    placeholder="Add Vehicle Registration Number"
+                    type="text"
+                    #vehicleRegNumber
+                    class="form-control"
+                    (keyup.enter)="onVehicleChange(vehicleRegNumber.value)"
+                    (blur)="onVehicleChange(vehicleRegNumber.value)"
+                    [(ngModel)]="orderInvoice.vehicleDetails.vehicleRegNo"
+                  />
+                </div>
+              </div>
+              <div class="form-group col-md-6">
+                <div class="position-relative form-group">
+                  <label for="vehicleLoadType" class="control-label"
+                    >Vehicle Load Type</label
+                  >
+                  <label class="form-control disabled">{{
+                    orderInvoice?.serviceProvider?.vehicleLoadType | uppercase
+                  }}</label>
+                </div>
+              </div>
+              <div class="form-group col-md-6">
+                <div class="position-relative form-group">
+                  <label for="driverNumber" class="control-label"
+                    >Driver Number</label
+                  >
+                  <input
+                    name="driverNumber"
+                    id="driverNumber"
+                    placeholder="Add Driver Number"
+                    type="text"
+                    #driverNumber
+                    class="form-control"
+                    (keyup.enter)="onDriverChange(driverNumber.value)"
+                    (blur)="onDriverChange(driverNumber.value)"
+                    ngModel="{{
+                      orderInvoice.vehicleDetails.driver
+                        ? getMobileNumberById(
+                            orderInvoice.vehicleDetails.driver.id
+                          )
+                        : ''
+                    }}"
+                    appNumberOnly
+                    maxlength="10"
+                  />
+                </div>
+              </div>
+              <div class="form-group col-md-6">
+                <div class="position-relative form-group">
+                  <label for="driverName" class="control-label"
+                    >Driver Name</label
+                  >
+                  <label class="form-control disabled">{{
+                    orderInvoice?.vehicleDetails?.driver?.name | titlecase
+                  }}</label>
+                </div>
+              </div>
+              <div class="form-group col-md-6">
+                <div class="position-relative form-group">
+                  <label for="serviceProviderNumber" class="control-label"
+                    >Service Provider Number (TAP)</label
+                  >
+                  <label
+                    class="form-control disabled"
+                    *ngIf="!providerNumber"
+                    >{{
+                      getProviderNumber(orderInvoice.serviceProvider?.provider)
+                    }}</label
+                  >
+                  <label class="form-control disabled" *ngIf="providerNumber">{{
+                    providerNumber
+                  }}</label>
+                </div>
+              </div>
+              <div class="form-group col-md-6">
+                <div class="position-relative form-group">
+                  <label for="driverName" class="control-label"
+                    >Service Provider Name (TAP)
+                  </label>
+                  <label class="form-control disabled">{{
+                    orderInvoice?.serviceProvider?.provider?.name | titlecase
+                  }}</label>
+                </div>
+              </div>
+            </div>
+            <div class="form-row">
+              <button
+                class="mr-2 mb-2 btn btn-primary"
+                mat-button
+                matStepperPrevious
+              >
+                Back
+              </button>
+              <button
+                type="button"
+                class="mr-2 mb-2 btn btn-primary"
+                (click)="updateVehicleDetailsInOrderInvoice(stepper, 1)"
+              >
+                Save & Next
+              </button>
+              <button
+                type="button"
+                class="mr-2 mb-2 btn btn-primary"
+                matStepperNext
+              >
+                Skip
+              </button>
+            </div>
+          </mat-step>
+          <mat-step>
+            <ng-template matStepLabel>Pickup Location(s) Details</ng-template>
+            <div class="form-row">
+              <h5 class="card-title bold-label">Pickup Location(s) Details</h5>
+              <ng-templete
+                *ngFor="
+                  let orderPickupSource of orderInvoice.orderPickupSources;
+                  let i = index
+                "
+                class="form-group card card-body col-md-12"
+              >
+                <div class="position-relative">
+                  <label
+                    for="pickupLocation"
+                    class="control-label"
+                    *ngIf="orderInvoice.orderPickupSources.length == 1"
+                    >Pickup Location
+                  </label>
+                  <label
+                    for="pickupLocation"
+                    class="control-label"
+                    *ngIf="orderInvoice.orderPickupSources.length != 1"
+                    >Pickup Location {{ i + 1 }}</label
+                  >
+                  <div
+                    class="row px-3 float-right"
+                    *ngIf="
+                      i == 0 &&
+                      (orderInvoice.state == 'CREATED' ||
+                        orderInvoice.state == 'READY_FOR_PICKUP')
+                    "
+                  >
+                    <a (click)="addMoreLocation(true)">
+                      <label class="bold-label">Add More Pickup Location</label>
+                      <i class="px-3 pe-7s-note"> </i>
+                    </a>
+                  </div>
+                  <div
+                    class="row px-3 float-right"
+                    *ngIf="
+                      i != 0 &&
+                      (orderInvoice.state == 'CREATED' ||
+                        orderInvoice.state == 'READY_FOR_PICKUP')
+                    "
+                  >
+                    <a (click)="removeLocation(i, true)">
+                      <label class="bold-label">Remove</label>
+                      <i class="px-3 fa fa-ban"> </i>
+                    </a>
+                  </div>
+                  <input
+                    name="pickupLocation"
+                    id="pickupLocation"
+                    placeholder="Add Pickup Location Address"
+                    type="text"
+                    #pickupLocation
+                    class="form-control"
+                    (keyup.enter)="
+                      updateLocalArea(pickupLocation.value, i, true)
+                    "
+                    (blur)="updateLocalArea(pickupLocation.value, i, true)"
+                    style="text-transform: capitalize"
+                    ngModel="{{ orderPickupSource?.address?.localArea }}"
+                  />
+                </div>
+                <div class="form-row pt-2">
+                  <div class="col-md-6">
+                    <div class="position-relative form-group">
+                      <select
+                        class="form-control"
+                        #pickupLocationState
+                        (change)="
+                          onStateChange(pickupLocationState.value, i, true)
+                        "
+                        value="{{
+                          selectedState(orderPickupSource?.address?.state)
+                        }}"
+                      >
+                        <option label="--Select State --"></option>
+                        <option
+                          *ngFor="let state of states | keyvalue"
+                          value="{{ state.key }}"
+                        >
+                          {{ state.value | titlecase }}
+                        </option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="position-relative form-group">
+                      <label
+                        class="form-control disabled"
+                        *ngIf="showCityLabel(i, true)"
+                        >{{ orderPickupSource.address.city | titlecase }}</label
+                      >
+                      <select
+                        *ngIf="!showCityLabel(i, true)"
+                        class="form-control"
+                        #pickupLocationCity
+                        (change)="
+                          onCityChange(pickupLocationCity.value, i, true)
+                        "
+                      >
+                        <option label="--Select City --"></option>
+                        <option
+                          *ngFor="let city of cities | keyvalue"
+                          value="{{ city.key }}"
+                        >
+                          {{ city.value | titlecase }}
+                        </option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+                <div class="form-row">
+                  <div class="form-group col-md-6">
+                    <div class="position-relative form-group">
+                      <label for="labourCount" class="control-label"
+                        >Labour Count</label
+                      >
+                      <input
+                        name="labourCount"
+                        id="labourCount"
+                        type="text"
+                        class="form-control"
+                        [(ngModel)]="orderPickupSource.labourCount"
+                      />
+                    </div>
+                  </div>
+                  <div class="form-group col-md-6">
+                    <div class="position-relative form-group">
+                      <label for="loadNo" class="control-label"
+                        >Load Number</label
+                      >
+                      <input
+                        id="loadNo"
+                        type="text"
+                        class="form-control"
+                        [(ngModel)]="orderPickupSource.loadNo"
+                      />
+                      <!-- <label class="form-control disabled">{{
+                        orderPickupSource?.loadNo
+                      }}</label> -->
+                    </div>
+                  </div>
+                </div>
+                <div class="form-row">
+                  <div class="form-group col-md-8">
+                    <div class="position-relative form-group">
+                      <label for="arrivalTime" class="control-label"
+                        >Arrival Time</label
+                      >
+                      <label
+                        class="form-control disabled"
+                        (click)="arrivalTimePicker.open()"
+                        >{{
+                          getDate(orderPickupSource?.timeStats?.arrivalTime)
+                            | date: "medium"
+                        }}</label
+                      >
+                      <input
+                        hidden
+                        matInput
+                        [ngxMatDatetimePicker]="arrivalTimePicker"
+                        placeholder="Click to Mark Arrival Time"
+                        name="arrivalTime"
+                        type="text"
+                        class="form-control"
+                        [min]="minDate"
+                        [max]="maxDate"
+                        disabled="false"
+                        [(ngModel)]="arrivalTime"
+                        (dateChange)="onChangeArrivalTime(i, true)"
+                        autocomplete="off"
+                        (click)="arrivalTimePicker.open()"
+                      />
+                    </div>
+                  </div>
+                  <div class="col-md-4 pt-4">
+                    <mat-datepicker-toggle
+                      matSuffix
+                      [for]="arrivalTimePicker"
+                    ></mat-datepicker-toggle>
+                    <ngx-mat-datetime-picker
+                      #arrivalTimePicker
+                      touchUi="true"
+                      enableMeridian="true"
+                    >
+                    </ngx-mat-datetime-picker>
+                  </div>
+                </div>
+                <div class="form-row">
+                  <div class="form-group col-md-5">
+                    <div class="position-relative form-group">
+                      <label for="workStart" class="control-label"
+                        >Start Loading Time</label
+                      >
+                      <label
+                        class="form-control disabled"
+                        (click)="workStartTimePicker.open()"
+                        >{{
+                          getDate(orderPickupSource?.timeStats?.workStart)
+                            | date: "medium"
+                        }}</label
+                      >
+                      <input
+                        hidden
+                        matInput
+                        [ngxMatDatetimePicker]="workStartTimePicker"
+                        placeholder="Click to Mark Work Start Time"
+                        name="workStartTime"
+                        type="text"
+                        class="form-control"
+                        [min]="minDate"
+                        [max]="maxDate"
+                        disabled="false"
+                        [(ngModel)]="workStartTime"
+                        (dateChange)="onChangeWorkStartTime(i, true)"
+                        autocomplete="off"
+                        (click)="workStartTimePicker.open()"
+                      />
+                    </div>
+                  </div>
+                  <div class="col-md-1 pt-4">
+                    <mat-datepicker-toggle
+                      matSuffix
+                      [for]="workStartTimePicker"
+                    ></mat-datepicker-toggle>
+                    <ngx-mat-datetime-picker
+                      #workStartTimePicker
+                      touchUi="true"
+                      enableMeridian="true"
+                    >
+                    </ngx-mat-datetime-picker>
+                  </div>
+                  <div class="form-group col-md-5">
+                    <div class="position-relative form-group">
+                      <label for="workEnd" class="control-label"
+                        >End Loading Time</label
+                      >
+                      <label
+                        class="form-control disabled"
+                        (click)="workEndTimePicker.open()"
+                        >{{
+                          getDate(orderPickupSource?.timeStats?.workEnd)
+                            | date: "medium"
+                        }}</label
+                      >
+                      <input
+                        hidden
+                        matInput
+                        [ngxMatDatetimePicker]="workEndTimePicker"
+                        placeholder="Click to Mark Work Completion Time"
+                        name="workEndTime"
+                        type="text"
+                        class="form-control"
+                        [min]="minDate"
+                        [max]="maxDate"
+                        disabled="false"
+                        [(ngModel)]="workEndTime"
+                        (dateChange)="onChangeWorkEndTime(i, true)"
+                        autocomplete="off"
+                        (click)="workEndTimePicker.open()"
+                      />
+                    </div>
+                  </div>
+                  <div class="col-md-1 pt-4">
+                    <mat-datepicker-toggle
+                      matSuffix
+                      [for]="workEndTimePicker"
+                    ></mat-datepicker-toggle>
+                    <ngx-mat-datetime-picker
+                      #workEndTimePicker
+                      touchUi="true"
+                      enableMeridian="true"
+                    >
+                    </ngx-mat-datetime-picker>
+                  </div>
+                </div>
+                <div class="card card-body">
+                  <h6 class="card-title bold-label">
+                    Pickup Packages(s) Details
+                  </h6>
+                  <ng-templete
+                    *ngFor="
+                      let package of orderPickupSource.packages;
+                      let j = index
+                    "
+                    class="form-group card card-body col-md-12"
+                  >
+                    <div class="position-relative">
+                      <label
+                        for="pickupPackage"
+                        class="control-label"
+                        *ngIf="orderPickupSource.packages.length == 1"
+                        >Pickup Package
+                      </label>
+                      <label
+                        for="pickupPackage"
+                        class="control-label"
+                        *ngIf="orderPickupSource.packages.length != 1"
+                        >Pickup Package {{ j + 1 }}</label
+                      >
+                      <div
+                        class="row px-3 float-right"
+                        *ngIf="
+                          j == 0 &&
+                          (orderInvoice.state == 'CREATED' ||
+                            orderInvoice.state == 'READY_FOR_PICKUP')
+                        "
+                      >
+                        <a (click)="addMorePackage(i, true)">
+                          <label class="bold-label"
+                            >Add More Pickup Package</label
+                          >
+                          <i class="px-3 pe-7s-note"> </i>
+                        </a>
+                      </div>
+                      <div
+                        class="row px-3 float-right"
+                        *ngIf="
+                          j != 0 &&
+                          (orderInvoice.state == 'CREATED' ||
+                            orderInvoice.state == 'READY_FOR_PICKUP')
+                        "
+                      >
+                        <a (click)="removePackage(i, j, true)">
+                          <label class="bold-label">Remove Package</label>
+                          <i class="px-3 fa fa-ban"> </i>
+                        </a>
+                      </div>
+                      <textarea
+                        name="packageDescription"
+                        placeholder="Add Package Description"
+                        #pickupLocation
+                        class="form-control"
+                        style="text-transform: capitalize"
+                        [(ngModel)]="package.description"
+                      ></textarea>
+                    </div>
+                    <div class="form-row">
+                      <div class="form-group col-md-4">
+                        <div class="position-relative form-group">
+                          <label for="billNumber" class="control-label"
+                            >Bill Number</label
+                          >
+                          <input
+                            type="text"
+                            class="form-control"
+                            [(ngModel)]="package.billNumber"
+                          />
+                        </div>
+                      </div>
+                      <div class="form-group col-md-4">
+                        <div class="position-relative form-group">
+                          <label for="amount" class="control-label"
+                            >Amount</label
+                          >
+                          <input
+                            type="text"
+                            class="form-control"
+                            [(ngModel)]="package.amount"
+                          />
+                        </div>
+                      </div>
+                      <div class="form-group col-md-4">
+                        <div class="position-relative form-group">
+                          <label for="freightPayment" class="control-label"
+                            >Freight Payment</label
+                          >
+                          <input
+                            type="text"
+                            class="form-control"
+                            [(ngModel)]="package.freightPayment"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </ng-templete>
+                </div>
+              </ng-templete>
+            </div>
+            <div class="form-row">
+              <button
+                class="mr-2 mb-2 btn btn-primary"
+                mat-button
+                matStepperPrevious
+              >
+                Back
+              </button>
+              <button
+                type="button"
+                class="mr-2 mb-2 btn btn-primary"
+                (click)="updateVehicleDetailsInOrderInvoice(stepper, 2)"
+              >
+                Save & Next
+              </button>
+              <button
+                type="button"
+                class="mr-2 mb-2 btn btn-primary"
+                matStepperNext
+              >
+                Skip
+              </button>
+            </div>
+          </mat-step>
+          <mat-step>
+            <ng-template matStepLabel>Drop Location(s) Details</ng-template>
+
+            <div class="form-row">
+              <h5 class="card-title bold-label">Drop Location(s) Details</h5>
+              <ng-templete
+                *ngFor="
+                  let orderDeliveryLocation of orderInvoice.orderDeliveryLocations;
+                  let i = index
+                "
+                class="form-group card card-body col-md-12"
+              >
+                <div class="position-relative">
+                  <label
+                    for="dropLocation"
+                    class="control-label bold-label"
+                    *ngIf="orderInvoice.orderDeliveryLocations.length == 1"
+                    >Drop Location
+                  </label>
+                  <label
+                    for="dropLocation"
+                    class="control-label bold-label"
+                    *ngIf="orderInvoice.orderDeliveryLocations.length != 1"
+                    >Drop Location {{ i + 1 }}</label
+                  >
+                  <div
+                    class="row px-3 float-right"
+                    *ngIf="
+                      i == 0 &&
+                      (orderInvoice.state == 'CREATED' ||
+                        orderInvoice.state == 'READY_FOR_PICKUP' ||
+                        orderInvoice.state == 'READY_FOR_SHIPPING')
+                    "
+                  >
+                    <a (click)="addMoreLocation(false)">
+                      <label class="bold-label">Add More Drop Location</label>
+                      <i class="px-3 pe-7s-note"> </i>
+                    </a>
+                  </div>
+                  <div
+                    class="row px-3 float-right"
+                    *ngIf="
+                      i != 0 &&
+                      (orderInvoice.state == 'CREATED' ||
+                        orderInvoice.state == 'READY_FOR_PICKUP' ||
+                        orderInvoice.state == 'READY_FOR_SHIPPING')
+                    "
+                  >
+                    <a (click)="removeLocation(i, false)">
+                      <label class="bold-label">Remove</label>
+                      <i class="px-3 fa fa-ban"> </i>
+                    </a>
+                  </div>
+                  <input
+                    name="dropLocation"
+                    placeholder="Add Drop Location Address"
+                    type="text"
+                    #dropLocation
+                    class="form-control"
+                    (keyup.enter)="
+                      updateLocalArea(dropLocation.value, i, false)
+                    "
+                    (blur)="updateLocalArea(dropLocation.value, i, false)"
+                    style="text-transform: capitalize"
+                    ngModel="{{ orderDeliveryLocation?.address?.localArea }}"
+                  />
+                </div>
+                <div class="form-row pt-2">
+                  <div class="col-md-6">
+                    <div class="position-relative form-group">
+                      <select
+                        class="form-control"
+                        #dropLocationState
+                        (change)="
+                          onStateChange(dropLocationState.value, i, false)
+                        "
+                        value="{{
+                          selectedState(orderDeliveryLocation?.address?.state)
+                        }}"
+                      >
+                        <option label="--Select State --"></option>
+                        <option
+                          *ngFor="let state of states | keyvalue"
+                          value="{{ state.key }}"
+                        >
+                          {{ state.value | titlecase }}
+                        </option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="position-relative form-group">
+                      <label
+                        class="form-control disabled"
+                        *ngIf="showCityLabel(i, false)"
+                        >{{
+                          orderDeliveryLocation.address.city | titlecase
+                        }}</label
+                      >
+                      <select
+                        *ngIf="!showCityLabel(i, false)"
+                        class="form-control"
+                        #dropLocationCity
+                        (change)="
+                          onCityChange(dropLocationCity.value, i, false)
+                        "
+                      >
+                        <option label="--Select City --"></option>
+                        <option
+                          *ngFor="let city of cities | keyvalue"
+                          value="{{ city.key }}"
+                        >
+                          {{ city.value | titlecase }}
+                        </option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+                <div class="form-row">
+                  <div class="form-group col-md-6">
+                    <div class="position-relative form-group">
+                      <label for="labourCount" class="control-label"
+                        >Labour Count</label
+                      >
+                      <input
+                        name="labourCount"
+                        type="text"
+                        class="form-control"
+                        [(ngModel)]="orderDeliveryLocation.labourCount"
+                      />
+                    </div>
+                  </div>
+                  <div class="form-group col-md-6">
+                    <div class="position-relative form-group">
+                      <label for="confirmationOtp" class="control-label"
+                        >Confirmation OTP</label
+                      >
+                      <label class="form-control disabled">{{
+                        orderDeliveryLocation?.confirmationOtp
+                      }}</label>
+                    </div>
+                  </div>
+                </div>
+                <div class="form-row">
+                  <div class="form-group col-md-6">
+                    <div class="position-relative form-group">
+                      <label for="consigneeName" class="control-label"
+                        >Consignee Name</label
+                      >
+                      <input
+                        placeholder="Add Consignee Name"
+                        type="text"
+                        class="form-control"
+                        [(ngModel)]="orderDeliveryLocation.consigneeName"
+                        appAlphabetOnly
+                      />
+                    </div>
+                  </div>
+                  <div class="form-group col-md-6">
+                    <div class="position-relative form-group">
+                      <label for="consigneeNumber" class="control-label"
+                        >Consignee Number</label
+                      >
+                      <input
+                        placeholder="Add Consignee Number"
+                        type="text"
+                        class="form-control"
+                        [(ngModel)]="
+                          orderDeliveryLocation.consigneeNotification
+                            .consigneeContact.mobile
+                        "
+                        maxlength="10"
+                        appNumberOnly
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div class="form-row">
+                  <div class="form-group col-md-5">
+                    <div class="position-relative form-group">
+                      <label for="arrivalTime" class="control-label"
+                        >Arrival Time</label
+                      >
+                      <label
+                        class="form-control disabled"
+                        (click)="dropArrivalTimePicker.open()"
+                        >{{
+                          getDate(orderDeliveryLocation?.timeStats?.arrivalTime)
+                            | date: "medium"
+                        }}</label
+                      >
+                      <input
+                        hidden
+                        matInput
+                        [ngxMatDatetimePicker]="dropArrivalTimePicker"
+                        placeholder="Click to Mark Arrival Time"
+                        type="text"
+                        class="form-control"
+                        [min]="minDate"
+                        [max]="maxDate"
+                        disabled="false"
+                        [(ngModel)]="arrivalTime"
+                        (dateChange)="onChangeArrivalTime(i, false)"
+                        autocomplete="off"
+                        (click)="dropArrivalTimePicker.open()"
+                      />
+                    </div>
+                  </div>
+                  <div class="col-md-1 pt-1">
+                    <mat-datepicker-toggle
+                      matSuffix
+                      [for]="dropArrivalTimePicker"
+                    ></mat-datepicker-toggle>
+                    <ngx-mat-datetime-picker
+                      #dropArrivalTimePicker
+                      touchUi="true"
+                      enableMeridian="true"
+                    >
+                    </ngx-mat-datetime-picker>
+                  </div>
+                  <div class="form-group col-md-6">
+                    <div class="position-relative form-group">
+                      <label for="orderId" class="control-label">LR Id</label>
+                      <label class="form-control disabled">{{
+                        orderDeliveryLocation?.lrId
+                      }}</label>
+                    </div>
+                  </div>
+                  <!-- <div class="form-group col-md-4">
+                    <div class="position-relative form-group control-label">
+                      <label for="orderId">Is POD Collected?</label>
+                      <input type="checkbox"  type="checkbox"
+                      [checked]="orderDeliveryLocation.physicalPod.isPodAvailable"
+                      (change)="orderDeliveryLocation.physicalPod.isPodAvailable = !orderDeliveryLocation.physicalPod.isPodAvailable"/>
+                    </div>
+                  </div> -->
+                </div>
+                <div class="form-row">
+                  <div class="form-group col-md-5">
+                    <div class="position-relative form-group">
+                      <label for="workStart" class="control-label"
+                        >Start Unloading Time</label
+                      >
+                      <label
+                        class="form-control disabled"
+                        (click)="dropWorkStartTimePicker.open()"
+                        >{{
+                          getDate(orderDeliveryLocation?.timeStats?.workStart)
+                            | date: "medium"
+                        }}</label
+                      >
+                      <input
+                        hidden
+                        matInput
+                        [ngxMatDatetimePicker]="dropWorkStartTimePicker"
+                        placeholder="Click to Mark Work Start Time"
+                        type="text"
+                        class="form-control"
+                        [min]="minDate"
+                        [max]="maxDate"
+                        disabled="false"
+                        [(ngModel)]="workStartTime"
+                        (dateChange)="onChangeWorkStartTime(i, false)"
+                        autocomplete="off"
+                        (click)="dropWorkStartTimePicker.open()"
+                      />
+                    </div>
+                  </div>
+                  <div class="col-md-1 pt-4">
+                    <mat-datepicker-toggle
+                      matSuffix
+                      [for]="dropWorkStartTimePicker"
+                    ></mat-datepicker-toggle>
+                    <ngx-mat-datetime-picker
+                      #dropWorkStartTimePicker
+                      touchUi="true"
+                      enableMeridian="true"
+                    >
+                    </ngx-mat-datetime-picker>
+                  </div>
+                  <div class="form-group col-md-5">
+                    <div class="position-relative form-group">
+                      <label for="workEnd" class="control-label"
+                        >End Unloading Time</label
+                      >
+                      <label
+                        class="form-control disabled"
+                        (click)="dropWorkEndTimePicker.open()"
+                        >{{
+                          getDate(orderDeliveryLocation?.timeStats?.workEnd)
+                            | date: "medium"
+                        }}</label
+                      >
+                      <input
+                        hidden
+                        matInput
+                        [ngxMatDatetimePicker]="dropWorkEndTimePicker"
+                        placeholder="Click to Mark Work Completion Time"
+                        name="workEndTime"
+                        type="text"
+                        class="form-control"
+                        [min]="minDate"
+                        [max]="maxDate"
+                        disabled="false"
+                        [(ngModel)]="workEndTime"
+                        (dateChange)="onChangeWorkEndTime(i, false)"
+                        autocomplete="off"
+                        (click)="dropWorkEndTimePicker.open()"
+                      />
+                    </div>
+                  </div>
+                  <div class="col-md-1 pt-4">
+                    <mat-datepicker-toggle
+                      matSuffix
+                      [for]="dropWorkEndTimePicker"
+                    ></mat-datepicker-toggle>
+                    <ngx-mat-datetime-picker
+                      #dropWorkEndTimePicker
+                      touchUi="true"
+                      enableMeridian="true"
+                    >
+                    </ngx-mat-datetime-picker>
+                  </div>
+                </div>
+                <div class="card card-body">
+                  <h6 class="card-title bold-label">
+                    Drop Packages(s) Details
+                  </h6>
+                  <ng-templete
+                    *ngFor="
+                      let package of orderDeliveryLocation.packages;
+                      let j = index
+                    "
+                    class="form-group card card-body col-md-12"
+                  >
+                    <div class="position-relative">
+                      <label
+                        for="dropPackage"
+                        class="control-label"
+                        *ngIf="orderDeliveryLocation.packages.length == 1"
+                        >Pickup Package
+                      </label>
+                      <label
+                        for="dropPackage"
+                        class="control-label"
+                        *ngIf="orderDeliveryLocation.packages.length != 1"
+                        >Pickup Package {{ j + 1 }}</label
+                      >
+                      <div
+                        class="row px-3 float-right"
+                        *ngIf="
+                          j == 0 &&
+                          (orderInvoice.state == 'CREATED' ||
+                            orderInvoice.state == 'READY_FOR_PICKUP' ||
+                            orderInvoice.state == 'READY_FOR_SHIPPING')
+                        "
+                      >
+                        <a (click)="addMorePackage(i, false)">
+                          <label class="bold-label"
+                            >Add More Drop Package</label
+                          >
+                          <i class="px-3 pe-7s-note"> </i>
+                        </a>
+                      </div>
+                      <div
+                        class="row px-3 float-right"
+                        *ngIf="
+                          j != 0 &&
+                          (orderInvoice.state == 'CREATED' ||
+                            orderInvoice.state == 'READY_FOR_PICKUP' ||
+                            orderInvoice.state == 'READY_FOR_SHIPPING')
+                        "
+                      >
+                        <a (click)="removePackage(i, j, false)">
+                          <label class="bold-label">Remove Package</label>
+                          <i class="px-3 fa fa-ban"> </i>
+                        </a>
+                      </div>
+                      <textarea
+                        name="packageDescription"
+                        placeholder="Add Package Description"
+                        #pickupLocation
+                        class="form-control"
+                        style="text-transform: capitalize"
+                        [(ngModel)]="package.description"
+                      ></textarea>
+                    </div>
+                    <div class="form-row">
+                      <div class="form-group col-md-4">
+                        <div class="position-relative form-group">
+                          <label for="billNumber" class="control-label"
+                            >Bill Number</label
+                          >
+                          <input
+                            type="text"
+                            class="form-control"
+                            [(ngModel)]="package.billNumber"
+                          />
+                        </div>
+                      </div>
+                      <div class="form-group col-md-4">
+                        <div class="position-relative form-group">
+                          <label for="amount" class="control-label"
+                            >Amount</label
+                          >
+                          <input
+                            type="text"
+                            class="form-control"
+                            [(ngModel)]="package.amount"
+                          />
+                        </div>
+                      </div>
+                      <div class="form-group col-md-4">
+                        <div class="position-relative form-group">
+                          <label for="freightPayment" class="control-label"
+                            >Freight Payment</label
+                          >
+                          <input
+                            type="text"
+                            class="form-control"
+                            [(ngModel)]="package.freightPayment"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </ng-templete>
+                </div>
+
+                <div class="card card-body my-2">
+                  <h6 class="card-title bold-label">Freight Charge Details</h6>
+                  <div class="form-row">
+                    <div class="form-group col-md-6">
+                      <div class="position-relative form-group">
+                        <label for="amount" class="control-label">Amount</label>
+                        <input
+                          type="text"
+                          class="form-control"
+                          [(ngModel)]="orderDeliveryLocation.charges.amount"
+                        />
+                      </div>
+                    </div>
+                    <div class="form-group col-md-6">
+                      <div class="position-relative form-group">
+                        <label for="amount" class="control-label"
+                          >Extra Amount</label
+                        >
+                        <input
+                          type="text"
+                          class="form-control"
+                          [(ngModel)]="orderDeliveryLocation.charges.extra"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="card card-body my-2">
+                    <h6 class="card-title bold-label">Halt Charge Details</h6>
+                    <div class="form-row">
+                      <div class="form-group col-md-5">
+                        <div class="position-relative form-group">
+                          <label for="haltStartTime" class="control-label"
+                            >Halting Start Time</label
+                          >
+                          <label
+                            class="form-control disabled"
+                            (click)="haltingStartTimePicker.open()"
+                            >{{
+                              getDate(
+                                orderDeliveryLocation?.charges?.haltCharge
+                                  ?.duration?.startTimeInMillis
+                              ) | date: "medium"
+                            }}</label
+                          >
+                          <input
+                            hidden
+                            matInput
+                            [ngxMatDatetimePicker]="haltingStartTimePicker"
+                            placeholder="Click to Mark Halting Start Time"
+                            type="text"
+                            class="form-control"
+                            [min]="minDate"
+                            [max]="maxDate"
+                            disabled="false"
+                            [(ngModel)]="haltingTime"
+                            (dateChange)="onChangeHaltTime(i, true)"
+                            autocomplete="off"
+                            (click)="haltingStartTimePicker.open()"
+                          />
+                        </div>
+                      </div>
+                      <div class="col-md-1 pt-4">
+                        <mat-datepicker-toggle
+                          matSuffix
+                          [for]="haltingStartTimePicker"
+                        ></mat-datepicker-toggle>
+                        <ngx-mat-datetime-picker
+                          #haltingStartTimePicker
+                          touchUi="true"
+                          enableMeridian="true"
+                        >
+                        </ngx-mat-datetime-picker>
+                      </div>
+                      <div class="form-group col-md-5">
+                        <div class="position-relative form-group">
+                          <label for="haltEndTime" class="control-label"
+                            >Halting End Time</label
+                          >
+                          <label
+                            class="form-control disabled"
+                            (click)="haltingEndTimePicker.open()"
+                            >{{
+                              getDate(
+                                orderDeliveryLocation?.charges?.haltCharge
+                                  ?.duration?.endTimeInMillis
+                              ) | date: "medium"
+                            }}</label
+                          >
+                          <input
+                            hidden
+                            matInput
+                            [ngxMatDatetimePicker]="haltingEndTimePicker"
+                            placeholder="Click to Mark Halting Start Time"
+                            type="text"
+                            class="form-control"
+                            [min]="minDate"
+                            [max]="maxDate"
+                            disabled="false"
+                            [(ngModel)]="haltingTime"
+                            (dateChange)="onChangeHaltTime(i, false)"
+                            autocomplete="off"
+                            (click)="haltingEndTimePicker.open()"
+                          />
+                        </div>
+                      </div>
+                      <div class="col-md-1 pt-4">
+                        <mat-datepicker-toggle
+                          matSuffix
+                          [for]="haltingEndTimePicker"
+                        ></mat-datepicker-toggle>
+                        <ngx-mat-datetime-picker
+                          #haltingEndTimePicker
+                          touchUi="true"
+                          enableMeridian="true"
+                        >
+                        </ngx-mat-datetime-picker>
+                      </div>
+                    </div>
+                    <div class="form-row">
+                      <div class="form-group col-md-6">
+                        <div class="position-relative form-group">
+                          <label for="haltCharge" class="control-label"
+                            >Halt Charge</label
+                          >
+                          <input
+                            type="text"
+                            class="form-control"
+                            [(ngModel)]="
+                              orderDeliveryLocation.charges.haltCharge.charge
+                            "
+                          />
+                        </div>
+                      </div>
+                      <div class="form-group col-md-6">
+                        <div class="position-relative form-group">
+                          <label for="reason" class="control-label"
+                            >Halting Reason</label
+                          >
+                          <input
+                            type="text"
+                            class="form-control"
+                            [(ngModel)]="
+                              orderDeliveryLocation.charges.haltCharge.reason
+                            "
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </ng-templete>
+            </div>
+
+            <div class="form-row">
+              <button
+                class="mr-2 mb-2 btn btn-primary"
+                mat-button
+                matStepperPrevious
+              >
+                Back
+              </button>
+              <button
+                type="button"
+                class="mr-2 mb-2 btn btn-primary"
+                (click)="updateVehicleDetailsInOrderInvoice(stepper, 3)"
+              >
+                Save & Next
+              </button>
+              <button
+                type="button"
+                class="mr-2 mb-2 btn btn-primary"
+                matStepperNext
+              >
+                Skip
+              </button>
+            </div>
+          </mat-step>
+          <mat-step>
+            <ng-template matStepLabel *ngIf="orderInvoice.paymentDetail"
+              >Payment Details</ng-template
+            >
+            <h6 class="card-title bold-label">Payment Details</h6>
+            <div class="form-row">
+              <div class="form-group col-md-3">
+                <div class="position-relative form-group">
+                  <label for="freightCharge" class="control-label"
+                    >Freight Charge</label
+                  >
+                  <input
+                    type="text"
+                    class="form-control"
+                    [(ngModel)]="orderInvoice.paymentDetail.freightCharge"
+                    (input)="onChangeFreightCharge()"
+                    appNumberOnly
+                  />
+                </div>
+              </div>
+              <div class="form-group col-md-3">
+                <div class="position-relative form-group">
+                  <label for="gstTax" class="control-label">GST Charge</label>
+                  <select
+                    class="form-control"
+                    matNativeControl
+                    required
+                    #gst
+                    [disabled]="orderInvoice.paymentDetail.freightCharge == 0"
+                    (change)="addGSTAmount(gst.value)"
+                  >
+                    <option label="--Select GST % --"></option>
+                    <option *ngFor="let gst of gstList" value="{{ gst }}">
+                      {{ gst }}
+                    </option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-group col-md-3">
+                <div class="position-relative form-group">
+                  <label for="gstTax" class="control-label"
+                    >GST Amount (SGST + CGST)</label
+                  >
+                  <input
+                    type="text"
+                    disabled
+                    class="form-control"
+                    [(ngModel)]="orderInvoice.paymentDetail.gstTax"
+                  />
+                </div>
+              </div>
+              <div class="form-group col-md-3">
+                <div class="position-relative form-group">
+                  <label for="gstTax" class="control-label"
+                    >Total Freight Amount</label
+                  >
+                  <input
+                    type="text"
+                    disabled
+                    class="form-control"
+                    [(ngModel)]="totalFrieghtAmount"
+                  />
+                </div>
+              </div>
+              <div class="form-group col-md-3">
+                <div class="position-relative form-group">
+                  <label for="advance" class="control-label"
+                    >Driver Amount
+                  </label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    [disabled]="orderInvoice.paymentDetail.freightCharge == 0"
+                    [(ngModel)]="orderInvoice.paymentDetail.driverFare"
+                    (input)="onChangeDriverFare()"
+                    appNumberOnly
+                  />
+                </div>
+              </div>
+              <div class="form-group col-md-3">
+                <div class="position-relative form-group">
+                  <label for="advance" class="control-label"
+                    >Diesel Amount</label
+                  >
+                  <input
+                    type="text"
+                    class="form-control"
+                    [disabled]="orderInvoice.paymentDetail.freightCharge == 0"
+                    [(ngModel)]="orderInvoice.paymentDetail.dieselFare"
+                    (input)="onChangeDieselFare()"
+                    appNumberOnly
+                  />
+                </div>
+              </div>
+              <div class="form-group col-md-3">
+                <div class="position-relative form-group">
+                  <label for="tdsAmount" class="control-label"
+                    >TDS Amount</label
+                  >
+                  <input
+                    type="text"
+                    disabled
+                    class="form-control"
+                    [(ngModel)]="orderInvoice.paymentDetail.tdsAmount"
+                  />
+                </div>
+              </div>
+              <div class="form-group col-md-3">
+                <div class="position-relative form-group">
+                  <label for="advance" class="control-label"
+                    >Advance Amount</label
+                  >
+                  <input
+                    type="text"
+                    class="form-control"
+                    [(ngModel)]="orderInvoice.paymentDetail.advance"
+                    (input)="onChangeAdvanceAmount()"
+                    [disabled]="
+                      orderInvoice.paymentDetail.driverFare == 0 &&
+                      orderInvoice.paymentDetail.dieselFare == 0
+                    "
+                    appNumberOnly
+                  />
+                </div>
+              </div>
+              <div class="form-group col-md-3">
+                <div class="position-relative form-group">
+                  <label for="haltTimeCharge" class="control-label"
+                    >Toll Charge</label
+                  >
+                  <input
+                    type="text"
+                    class="form-control"
+                    appNumberOnly
+                    [(ngModel)]="orderInvoice.paymentDetail.tollAmount"
+                    [disabled]="
+                      orderInvoice.paymentDetail.driverFare == 0 &&
+                      orderInvoice.paymentDetail.dieselFare == 0
+                    "
+                    (input)="addExtraCharges()"
+                  />
+                </div>
+              </div>
+              <div class="form-group col-md-3">
+                <div class="position-relative form-group">
+                  <label for="haltTimeCharge" class="control-label"
+                    >Halting Charge</label
+                  >
+                  <input
+                    type="text"
+                    class="form-control"
+                    appNumberOnly
+                    [(ngModel)]="orderInvoice.paymentDetail.haltTimeCharge"
+                    [disabled]="
+                      orderInvoice.paymentDetail.driverFare == 0 &&
+                      orderInvoice.paymentDetail.dieselFare == 0
+                    "
+                    (input)="addExtraCharges()"
+                  />
+                </div>
+              </div>
+              <div class="form-group col-md-3">
+                <div class="position-relative form-group">
+                  <label for="labourCharge" class="control-label"
+                    >Labour Charge</label
+                  >
+                  <input
+                    type="text"
+                    class="form-control"
+                    [(ngModel)]="orderInvoice.paymentDetail.labourCharge"
+                    [disabled]="
+                      orderInvoice.paymentDetail.driverFare == 0 &&
+                      orderInvoice.paymentDetail.dieselFare == 0
+                    "
+                    appNumberOnly
+                    (input)="addExtraCharges()"
+                  />
+                </div>
+              </div>
+              <div class="form-group col-md-3">
+                <div class="position-relative form-group">
+                  <label for="fine" class="control-label"
+                    >Fine Charges (If Any)</label
+                  >
+                  <input
+                    type="text"
+                    class="form-control"
+                    [(ngModel)]="orderInvoice.paymentDetail.fine"
+                    [disabled]="
+                      orderInvoice.paymentDetail.driverFare == 0 &&
+                      orderInvoice.paymentDetail.dieselFare == 0
+                    "
+                    (input)="addExtraCharges()"
+                    appNumberOnly
+                  />
+                </div>
+              </div>
+              <div class="form-group col-md-3">
+                <div class="position-relative form-group">
+                  <label for="discount" class="control-label"
+                    >Discount Amount (If Any)</label
+                  >
+                  <input
+                    type="text"
+                    class="form-control"
+                    [(ngModel)]="orderInvoice.paymentDetail.discount"
+                    [disabled]="orderInvoice.paymentDetail.freightCharge == 0"
+                    appNumberOnly
+                    (input)="onChangeDiscount()"
+                  />
+                </div>
+              </div>
+              <div class="form-group col-md-3">
+                <div class="position-relative form-group">
+                  <label for="discount" class="control-label"
+                    >Remaining Amount</label
+                  >
+                  <input
+                    type="text"
+                    class="form-control"
+                    disabled
+                    [(ngModel)]="orderInvoice.paymentDetail.remainingAmount"
+                  />
+                </div>
+              </div>
+              <div class="form-group col-md-6">
+                <div class="position-relative form-group">
+                  <label for="discount" class="control-label"
+                    >Total Extra Amount</label
+                  >
+                  <input
+                    type="text"
+                    class="form-control"
+                    disabled
+                    [(ngModel)]="totalExtraAmount"
+                  />
+                </div>
+              </div>
+              <div class="form-group col-md-6">
+                <div class="position-relative form-group">
+                  <label for="discount" class="control-label"
+                    >Total Amount</label
+                  >
+                  <input
+                    type="text"
+                    class="form-control"
+                    disabled
+                    [(ngModel)]="orderInvoice.paymentDetail.totalAmount"
+                  />
+                </div>
+              </div>
+              <div class="form-group col-md-12">
+                <div class="position-relative form-group">
+                  <label for="paymentRemark" class="control-label"
+                    >Remark (if any)</label
+                  >
+                  <textarea
+                    name="paymentRemark"
+                    placeholder="Add Payment Remark"
+                    #pickupLocation
+                    class="form-control"
+                    style="text-transform: capitalize"
+                    [(ngModel)]="orderInvoice.paymentDetail.remark"
+                  ></textarea>
+                </div>
+              </div>
+            </div>
+            <div class="form-row">
+              <button
+                class="mr-2 mb-2 btn btn-primary"
+                mat-button
+                matStepperPrevious
+              >
+                Back
+              </button>
+              <button
+                type="button"
+                class="mr-2 mb-2 btn btn-primary"
+                (click)="onStepperCompletion(stepper)"
+              >
+                Save & Done
+              </button>
+            </div>
+          </mat-step>
+        </mat-horizontal-stepper>
+      </div>
+    </div>
+  </div>
+</div>

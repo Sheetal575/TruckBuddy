@@ -1,0 +1,187 @@
+<div class="main-card mb-3 card" *ngIf="!isLoading">
+  <div class="card-body">
+    <div class="position-relative row">
+      <div
+        class="col-sm-6 d-flex justify-content-between"
+        style="display: inherit"
+      >
+        <h5 class="card-title"><b> Booking Status</b></h5>
+        <h6
+          class="font-weight-bold pt-1 blink_me"
+          [ngClass]="getTextColorCss()"
+        >
+          {{ bookingReq?.requestStatus?.toString() | uppercase }}
+        </h6>
+      </div>
+      <div class="col-sm-6 float-right">
+        <!-- <a
+          style="cursor: pointer"
+          [routerLink]="['.../../vehicleBooking/list-vehicle-booking ']"
+          fragment="{{ bookingReq.id }}"
+          class="mb-2 mr-2 btn btn-outline-primary float-sm-right float-md-right float-lg-right float-xl-right"
+          >View</a
+        > -->
+        <a
+          style="cursor: pointer"
+          (click)="onBack(bookingReq?.requestStatus)"
+          class="mb-2 mr-2 btn btn-secondary float-sm-right float-md-right float-lg-right float-xl-right"
+          >Back</a
+        >
+         <a
+          style="cursor: pointer"
+          *ngIf="bookingReq.requestStatus!= 'DECLINED' && bookingReq.orderStatus !='ORDER_COMPLETED'"
+          (click)="cancelBooking(bookingReq)"
+          class="mb-2 mr-2 btn btn-outline-danger text-hover-white float-sm-right float-md-right float-lg-right float-xl-right"
+          >Reject / Cancel Booking</a
+        >
+        <a
+          style="cursor: pointer"
+          fragment="{{ bookingReq.id }}"
+          [routerLink]="['../../vehicleBooking/list-vehicle-booking']"
+          class="mb-2 mr-2 btn btn-outline-info text-hover-white float-sm-right float-md-right float-lg-right float-xl-right"
+          >View Request(s)</a
+        >
+        <a
+          style="cursor: pointer"
+          *ngIf="bookingReq.orderId != null"
+          [routerLink]="['../../orderInvoice/view-order-invoice']"
+          fragment="{{ bookingReq.id }}"
+          class="mb-2 mr-2 btn btn-outline-success text-hover-white float-sm-right float-md-right float-lg-right float-xl-right"
+          >View Order Invoice</a
+        >
+      </div>
+    </div>
+    <form>
+      <div class="position-relative row">
+        <h5 class="col-sm-3 col-form-label font-weight-bold">Pickup Address</h5>
+        <h5 class="col-sm-1 col-form-label font-weight-bold">:</h5>
+        <h6 class="col-sm-8 col-form-label">
+          {{ getAddress(bookingReq.source) | titlecase }}
+        </h6>
+      </div>
+      <div
+        class="position-relative row"
+        *ngFor="let destination of bookingReq.destinations; let i = index"
+      >
+        <h5
+          class="col-sm-3 col-form-label font-weight-bold"
+          *ngIf="bookingReq.destinations.length == 1"
+        >
+          Drop Location
+        </h5>
+        <h5
+          class="col-sm-3 col-form-label font-weight-bold"
+          *ngIf="bookingReq.destinations.length > 1"
+        >
+          Drop Location {{ i + 1 }}
+        </h5>
+        <h5 class="col-sm-1 col-form-label font-weight-bold">:</h5>
+        <h6 class="col-sm-8 col-form-label">
+          {{ getAddress(destination) | titlecase }}
+        </h6>
+      </div>
+
+      <div class="position-relative row">
+        <h5 class="col-sm-3 col-form-label font-weight-bold">
+          Booking Date & TIme
+        </h5>
+        <h5 class="col-sm-1 col-form-label font-weight-bold">:</h5>
+        <h6 class="col-sm-8 col-form-label">
+          {{ getBookingDateTime(bookingReq.requestedTime) | date: "medium" }}
+        </h6>
+      </div>
+
+      <div class="position-relative row">
+        <h5 class="col-sm-3 col-form-label font-weight-bold">Vehicle Name</h5>
+        <h5 class="col-sm-1 col-form-label font-weight-bold">:</h5>
+        <h6 class="col-sm-8 col-form-label">
+          {{ getVehicleName(bookingReq?.vehicleCategoryId) | titlecase }}
+        </h6>
+      </div>
+
+      <div class="position-relative row">
+        <h5 class="col-sm-3 col-form-label font-weight-bold">Vehicle Registration Number</h5>
+        <h5 class="col-sm-1 col-form-label font-weight-bold">:</h5>
+        <h6 class="col-sm-8 col-form-label">
+          {{ bookingReq?.vehicleInfo?.name | uppercase }}
+        </h6>
+      </div>
+      <div class="position-relative row">
+        <h5 class="col-sm-3 col-form-label font-weight-bold">Order Id</h5>
+        <h5 class="col-sm-1 col-form-label font-weight-bold">:</h5>
+        <h6 class="col-sm-8 col-form-label">
+          {{ bookingReq?.orderId }}
+        </h6>
+      </div>
+
+      <!-- *ngIf="bookingReq && bookingReq.proposalAmount" -->
+      <div class="position-relative row" >
+        <h5 class="col-sm-3 col-form-label font-weight-bold">Proposal Amount</h5>
+        <h5 class="col-sm-1 col-form-label font-weight-bold">:</h5>
+        <h6 class="col-sm-8 col-form-label">
+          {{ bookingReq.proposalMoney }}
+        </h6>
+      </div>
+
+
+
+      <div class="position-relative main-card mb-3 card">
+        <div class="card-body border">
+          <h5 class="card-title">Client Details</h5>
+          <div class="row position-relative">
+            <h5 class="col-sm-3 col-form-label font-weight-bold">Name</h5>
+            <h5 class="col-sm-1 col-form-label font-weight-bold">:</h5>
+            <h6 class="col-sm-8 col-form-label">
+              {{ bookingReq?.clientRef?.name | titlecase }}
+            </h6>
+          </div>
+        </div>
+      </div>
+      <div class="position-relative main-card mb-3 card">
+        <div class="card-body border">
+          <h5 class="card-title">Requested By Details</h5>
+          <div class="row position-relative">
+            <h5 class="col-sm-3 col-form-label font-weight-bold">Name</h5>
+            <h5 class="col-sm-1 col-form-label font-weight-bold">:</h5>
+            <h6 class="col-sm-8 col-form-label">
+              {{ bookingReq?.requestedByRef?.name | titlecase }}
+            </h6>
+          </div>
+          <div class="row position-relative">
+            <h5 class="col-sm-3 col-form-label font-weight-bold">
+              Contact Number
+            </h5>
+            <h5 class="col-sm-1 col-form-label font-weight-bold">:</h5>
+            <h6 class="col-sm-8 col-form-label">
+              {{ getContactNumber(bookingReq?.requestedByRef?.id) }}
+            </h6>
+          </div>
+        </div>
+      </div>
+      <div class="position-relative main-card mb-3 card">
+        <div class="card-body border">
+          <h5 class="card-title">Device Details</h5>
+          <div class="row position-relative">
+            <h5 class="col-sm-3 col-form-label font-weight-bold">Name</h5>
+            <h5 class="col-sm-1 col-form-label font-weight-bold">:</h5>
+            <h6 class="col-sm-8 col-form-label">
+              {{ bookingReq?.deviceId | uppercase }}
+            </h6>
+          </div>
+        </div>
+      </div>
+      <div class="position-relative main-card mb-3 card">
+        <div class="card-body border">
+          <h5 class="card-title">Warehouse Details (If available)</h5>
+          <div class="row position-relative">
+            <h5 class="col-sm-3 col-form-label font-weight-bold">Name</h5>
+            <h5 class="col-sm-1 col-form-label font-weight-bold">:</h5>
+            <h6 class="col-sm-8 col-form-label">
+              {{ bookingReq?.warehouseRef?.name | titlecase }}
+            </h6>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
