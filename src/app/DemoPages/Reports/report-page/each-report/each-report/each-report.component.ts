@@ -38,11 +38,14 @@ export class EachReportComponent implements OnInit {
   ]
    show(error){
     this.toastr.error('Please Enter Date and Time')
-    this.toastr.error('There is some Problem While generating this file')  
+    // this.toastr.error('There is some Problem While generating this file')  
    }
    showFileStatus(){
      this.toastr.success('File Generated.')
      this.toastr.info ('File is Downloading...')
+   }
+   showErrorForInvoice(){
+    this.toastr.error('Please Choose specific Client')
    }
     argument:any;
 
@@ -65,6 +68,9 @@ export class EachReportComponent implements OnInit {
         },
         error=>{
           this.show(error)
+          if(index == 1){
+            this.showErrorForInvoice();
+          }
           console.log(error);
         }
       )

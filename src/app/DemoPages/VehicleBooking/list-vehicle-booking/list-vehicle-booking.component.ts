@@ -111,7 +111,6 @@ export class ListVehicleBookingComponent implements OnInit, AfterViewInit {
  
   }
   async getBookingRequest() {
-    setInterval(async () => {  
     try {
       this.bookingRequest = await this.bookingRequestService
         .getBookingRequest(this.bookingReqId)
@@ -132,11 +131,10 @@ export class ListVehicleBookingComponent implements OnInit, AfterViewInit {
         fragment: this.bookingReqId,
       });
     }
-  }, 10000);
+
   }
 
-  async handleBooking(vehicleBooking: VehicleBooking, isAccepted: boolean) {
-    setInterval(async () => {  
+  async handleBooking(vehicleBooking: VehicleBooking, isAccepted: boolean) { 
     if (isAccepted) {
       const dialogRef = this.dialog.open(RejectBookingBottomSheetComponent, {
         data: {
@@ -180,11 +178,9 @@ export class ListVehicleBookingComponent implements OnInit, AfterViewInit {
         }
       });
     }
-    }, 10000);
   }
 
   async updateVehicleBooking(vehicleBooking: VehicleBooking) {
-    setInterval(async () => { 
     try {
       var updateVehicleBooking = await this.bookingRequestService
         .acceptVehicleBooking(vehicleBooking)
@@ -219,11 +215,9 @@ export class ListVehicleBookingComponent implements OnInit, AfterViewInit {
         ToastMessageType.ERROR
       );
     }
-  }, 10000);
   }
 
   async addVehicleBookingRequest() {
-    setInterval(async () => { 
     const dialogRef = this.dialog.open(AddVehicleBookingComponent, {
       data: {
         bookingRequest: this.bookingRequest,
@@ -236,7 +230,6 @@ export class ListVehicleBookingComponent implements OnInit, AfterViewInit {
         this.addBookingRequest(result.assigneeRef);
       }
     });
-  }, 10000);
   }
 
   disableAddVehicleBookingButton() {

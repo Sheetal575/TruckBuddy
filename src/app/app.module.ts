@@ -165,7 +165,7 @@ import { FileUploadComponent } from "./utils/file-upload/file-upload.component";
 import { FormFieldErrorDisplayComponent } from "./utils/form-field-error-display/form-field-error-display.component";
 import { EachReportComponent } from './DemoPages/Reports/report-page/each-report/each-report/each-report.component';
 import { NgxMatDatetimePickerModule, NgxMatTimepickerModule } from '@angular-material-components/datetime-picker';
-
+import {MatCheckboxModule} from '@angular/material/checkbox';
 const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = { 
   suppressScrollX: true,
 };
@@ -340,6 +340,7 @@ const CUSTOM_DATE_FORMATS: NgxMatDateFormats = {
     LoadingBarRouterModule,
 
     //MatTable Module
+    MatCheckboxModule,
     MatTableModule,
     MatIconModule,
     MatSortModule,

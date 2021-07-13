@@ -59,7 +59,9 @@ export class CreateBookingComponent implements OnInit {
   bookingDateTime: string = "";
   public minDate: moment.Moment;
   public maxDate: moment.Moment;
-
+ forcevehicleBooking:boolean;
+ state=null;
+ city=null;
   constructor(
     private vehicleCategoryService: VehicleCategoryService,
     private loadTypeFormatter: LoadTypeFormatter,
@@ -181,16 +183,22 @@ export class CreateBookingComponent implements OnInit {
   }
 
   updateLocalArea(localArea: string, i: number, isSource: boolean) {
+    
     if (isSource) { //testing
       if (!this.booking.source) {
         this.booking.source = new DetailedAddress();
       }
       this.booking.source.localArea = localArea;
+      // if(!this.forcevehicleBooking){
+
+      // }
     } else {
       let destination: DetailedAddress = new DetailedAddress();
       if (!this.booking.destinations) {
         this.booking.destinations = [];
+        
       } else {
+        
         if (i > this.booking.destinations.length - 1) {
           console.log(this.booking.destinations.length);
           this.booking.destinations.push(destination);
@@ -231,6 +239,7 @@ export class CreateBookingComponent implements OnInit {
         this.booking.source = new DetailedAddress();
       }
       this.booking.source.state = this.states.get(stateId).toString();
+      this.state = this.booking.source.state;
       this.booking.source.city = null;
     } else {
       let destination: DetailedAddress = new DetailedAddress();
@@ -245,6 +254,7 @@ export class CreateBookingComponent implements OnInit {
           destination = this.booking.destinations[index];
         }
       }
+      
       destination.state = this.states.get(stateId).toString();
       destination.city = null;
       if (this.booking.destinations.length > 0) {
@@ -266,6 +276,7 @@ export class CreateBookingComponent implements OnInit {
   async onCityChange(cityId: string, isSource: boolean, index: number) {
     if (isSource) {
       this.booking.source.city = this.cities.get(cityId).toString();
+      
     } else {
       let destination;
       if (index > this.booking.destinations.length) {
@@ -276,6 +287,7 @@ export class CreateBookingComponent implements OnInit {
         destination = this.booking.destinations[index];
       }
       destination.city = this.cities.get(cityId).toString();
+      this.city = this.booking.source.city;
     }
   }
 
@@ -295,7 +307,9 @@ export class CreateBookingComponent implements OnInit {
     } else if (!this.booking.source.city) {
       this.onError("Enter Source City");
       return;
-    } else if (this.booking.destinations.length > 0) {
+    }
+    if (!this.forcevehicleBooking) {
+      if (this.booking.destinations.length > 0) {
       this.booking.destinations.forEach((destination) => {
         if (!destination.localArea) {
           this.onError("Enter Destination Address");
@@ -312,6 +326,8 @@ export class CreateBookingComponent implements OnInit {
         }
       });
     } 
+    }
+     
      if (!this.bookingDateTime) {
       this.onError("Select Booking Date & Time");
       return;
@@ -343,21 +359,23 @@ export class CreateBookingComponent implements OnInit {
       this.booking.source.geoAddress.coordinates.push(
         (sourceLocation as Location).lat
       );
-
-      for (let index = 0; index < this.booking.destinations.length; index++) {
-        var destinationGeoLocation = await this.geoLocationService.getGeoLocation(
-          this.booking.destinations[index]
-        );
-        this.booking.destinations[index].geoAddress = new GeoAddress();
-        this.booking.destinations[index].geoAddress.type = "Point";
-        this.booking.destinations[index].geoAddress.coordinates = [];
-        this.booking.destinations[index].geoAddress.coordinates.push(
-          (destinationGeoLocation as Location).lng
-        );
-        this.booking.destinations[index].geoAddress.coordinates.push(
-          (destinationGeoLocation as Location).lat
-        );
+      if (!this.forcevehicleBooking) {
+        for (let index = 0; index < this.booking.destinations.length; index++) {
+          var destinationGeoLocation = await this.geoLocationService.getGeoLocation(
+            this.booking.destinations[index]
+          );
+          this.booking.destinations[index].geoAddress = new GeoAddress();
+          this.booking.destinations[index].geoAddress.type = "Point";
+          this.booking.destinations[index].geoAddress.coordinates = [];
+          this.booking.destinations[index].geoAddress.coordinates.push(
+            (destinationGeoLocation as Location).lng
+          );
+          this.booking.destinations[index].geoAddress.coordinates.push(
+            (destinationGeoLocation as Location).lat
+          );
+        }
       }
+      
 
       this.booking.requestedTime = this.dateTimeProvider.getMillis(
         this.bookingDateTime
@@ -453,7 +471,18 @@ export class CreateBookingComponent implements OnInit {
   }
 
   addProposalAmount(proposalAmount: string) {
-    console.log(proposalAmount);
     this.booking.proposalMoney = Number(proposalAmount);
+  }
+
+  //for force vehicle booking-----
+  
+  onchangeforceVehicleBooking(value:boolean){
+      this.forcevehicleBooking = value;
+      if(this.forcevehicleBooking){
+        this.updateLocalArea("NO DESTINATION",0,false);
+        this.onStateChange(this.state, false, 0);
+        this.onCityChange(this.city, false, 0 )
+
+      }
   }
 }

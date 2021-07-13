@@ -64,90 +64,105 @@
           </div>
         </div>
       </div>
-      <div
-        class="position-relative form-group"
-        *ngFor="let destination of destinations; let i = index"
-      >
-        <label class="bold-label" for="source" *ngIf="destinations.length == 1"
-          >Drop Location</label
-        >
-        <label class="bold-label" for="source" *ngIf="destinations.length != 1"
-          >Drop Location {{ i + 1 }}</label
-        >
-        <div class="row px-3 float-right" *ngIf="i == 0">
-          <a (click)="addMoreDestinations()">
-            <label class="bold-label">Add More Drop Location</label>
-            <i class="px-3 pe-7s-note"> </i>
-          </a>
-        </div>
-        <div class="row px-3 float-right" *ngIf="i != 0">
-          <a (click)="removeDestination(i)">
-            <label class="bold-label">Remove</label>
-            <i class="px-3 fa fa-ban"> </i>
-          </a>
-        </div>
-        <input
-          placeholder="Enter Drop Location"
-          type="text"
-          #destinationArea
-          (keyup.enter)="updateLocalArea(destinationArea.value, i, false)"
-          (blur)="updateLocalArea(destinationArea.value, i, false)"
-          style="text-transform: capitalize"
-          autocomplete="off"
-          class="form-control"
-        />
-        <div class="form-row pt-2">
-          <div class="col-md-6">
-            <div class="position-relative form-group">
-              <select
-                class="form-control"
-                #destinationState
-                (change)="onStateChange(destinationState.value, false, i)"
-              >
-                <option label="--Select State --"></option>
-                <option
-                  *ngFor="let state of states | keyvalue"
-                  value="{{ state.key }}"
-                >
-                  {{ state.value | titlecase }}
-                </option>
-              </select>
-            </div>
-          </div>
-          <div class="col-md-6">
-            <div class="position-relative form-group">
-              <label
-                class="form-control disabled"
-                *ngIf="
-                  booking &&
-                  booking.destinations &&
-                  booking.destinations.length > i &&
-                  booking.destinations[i].city
-                "
-                >{{ booking.destinations[i].city | titlecase }}</label
-              >
-              <select
-                class="form-control"
-                *ngIf="
-                  !booking ||
-                  !booking.destinations ||
-                  !booking.destinations[i].city
-                "
-                #destinationCity
-                (focusout)="onCityChange(destinationCity.value, false, i)"
-              >
-                <option label="--Select City --"></option>
-                <option
-                  *ngFor="let city of cities | keyvalue"
-                  value="{{ city.key }}"
-                >
-                  {{ city.value | titlecase }}
-                </option>
-              </select>
-            </div>
-          </div>
-        </div>
+
+
+      <!-- checkbox for force vehicle booking -->
+      <div class="position-relative form-group">
+           <mat-checkbox color="primary"
+                         name="forcevehicleBooking"
+                         [(ngModel)]="forcevehicleBooking"
+                         (change)="onchangeforceVehicleBooking(forcevehicleBooking)"
+          >Force Vehicle Booking
+          </mat-checkbox>
       </div>
+      
+        <div *ngIf="!forcevehicleBooking">
+          <div
+            class="position-relative form-group"
+            *ngFor="let destination of destinations; let i = index"
+          >
+            <label class="bold-label" for="source" *ngIf="destinations.length == 1"
+              >Drop Location</label
+            >
+            <label class="bold-label" for="source" *ngIf="destinations.length != 1"
+              >Drop Location {{ i + 1 }}</label
+            >
+            <div class="row px-3 float-right" *ngIf="i == 0">
+              <a (click)="addMoreDestinations()">
+                <label class="bold-label">Add More Drop Location</label>
+                <i class="px-3 pe-7s-note"> </i>
+              </a>
+            </div>
+            <div class="row px-3 float-right" *ngIf="i != 0">
+              <a (click)="removeDestination(i)">
+                <label class="bold-label">Remove</label>
+                <i class="px-3 fa fa-ban"> </i>
+              </a>
+            </div>
+            <input
+              placeholder="Enter Drop Location"
+              type="text"
+              #destinationArea
+              (keyup.enter)="updateLocalArea(destinationArea.value, i, false)"
+              (blur)="updateLocalArea(destinationArea.value, i, false)"
+              style="text-transform: capitalize"
+              autocomplete="off"
+              class="form-control"
+            />
+            <div class="form-row pt-2">
+              <div class="col-md-6">
+                <div class="position-relative form-group">
+                  <select
+                    class="form-control"
+                    #destinationState
+                    (change)="onStateChange(destinationState.value, false, i)"
+                  >
+                    <option label="--Select State --"></option>
+                    <option
+                      *ngFor="let state of states | keyvalue"
+                      value="{{ state.key }}"
+                    >
+                      {{ state.value | titlecase }}
+                    </option>
+                  </select>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="position-relative form-group">
+                  <label
+                    class="form-control disabled"
+                    *ngIf="
+                      booking &&
+                      booking.destinations &&
+                      booking.destinations.length > i &&
+                      booking.destinations[i].city
+                    "
+                    >{{ booking.destinations[i].city | titlecase }}</label
+                  >
+                  <select
+                    class="form-control"
+                    *ngIf="
+                      !booking ||
+                      !booking.destinations ||
+                      !booking.destinations[i].city
+                    "
+                    #destinationCity
+                    (focusout)="onCityChange(destinationCity.value, false, i)"
+                  >
+                    <option label="--Select City --"></option>
+                    <option
+                      *ngFor="let city of cities | keyvalue"
+                      value="{{ city.key }}"
+                    >
+                      {{ city.value | titlecase }}
+                    </option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+       </div>
+
       <div class="position-relative form-group">
         <div class="form-row">
           <div class="col-md-6">
