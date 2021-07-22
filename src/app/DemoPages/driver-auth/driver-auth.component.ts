@@ -72,7 +72,7 @@ export class DriverAuthComponent implements OnInit {
     const startTimeInMillis = this.dateUtil.getMillis( this.fromDate,DateTimeFormatEnum.FULL_DATE_TIME);
     const endTimeInMillis =this.dateUtil.getMillis( this.toDate,DateTimeFormatEnum.FULL_DATE_TIME);
     const createdAtRange ={startTimeInMillis,endTimeInMillis};
-    const body = {createdAtRange,"driverId":"TAP_DRIVER@8851773010"}
+    const body = {createdAtRange}
     this.reportservice.downloadReport("http://tbapi.truckbuddy.co.in/driverAuth/search/report",body)
     .subscribe(
       data=>{
