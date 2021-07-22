@@ -1,5 +1,5 @@
 import { Component, OnInit } from "@angular/core";
-import { DateTimeProvider } from "../../core/utils/date-time.provider";
+import { DateTimeFormatEnum, DateTimeProvider } from "../../core/utils/date-time.provider";
 import { DriverAuthReq } from "../../models/driver-auth/driver-auth.req";
 import { DriverAuthService } from "../../services/driver-auth.sevice";
 import { TimeRange } from "../../models/order-invoice/order-invoice.class";
@@ -7,6 +7,8 @@ import {
   ToastMessage,
   ToastMessageType,
 } from "../../core/utils/toastr-message.helper";
+import { NgForm } from "@angular/forms";
+import { ReportServiceService } from "../Reports/report-service/report-service.service";
 
 @Component({
   selector: "app-driver-auth",
@@ -22,13 +24,17 @@ export class DriverAuthComponent implements OnInit {
   constructor(
     private driverAuthService: DriverAuthService,
     private dateTimeProvider: DateTimeProvider,
-    private toaster: ToastMessage
+    private toaster: ToastMessage,
+    private dateUtil:DateTimeProvider,
+    private reportservice :ReportServiceService
   ) {}
 
   async ngOnInit() {}
 
-  async onSearch() {
-    if (!this.driverMobile) {
+  async onSearch(form:NgForm) {
+    const number = form.value.number;
+    console.log(number);
+    if (!number) {
       this.onError("Enter Driver Number");
       return;
     } else if (!this.fromDate) {
@@ -45,7 +51,7 @@ export class DriverAuthComponent implements OnInit {
       );
       driverAuthReq.createdAtRange.endTimeInMillis = this.dateTimeProvider.getMillis(
         this.toDate
-      );
+      );// old developer directly append profile type and called api now question is why driver number is empty
       driverAuthReq.driverId = "TAP_DRIVER@" + this.driverMobile;
       this.driverAuthList = await this.driverAuthService
         .search(driverAuthReq)
@@ -56,5 +62,28 @@ export class DriverAuthComponent implements OnInit {
   onError(msg: string) {
     this.toaster.showToastr("Oops!!!", msg, ToastMessageType.ERROR);
     return;
+  }
+  onSuccess(msg:string){
+    this.toaster.showToastr('', msg, ToastMessageType.SUCCESS);
+    return;
+  }
+  downLoad_Report(form:NgForm){
+    
+    const startTimeInMillis = this.dateUtil.getMillis( this.fromDate,DateTimeFormatEnum.FULL_DATE_TIME);
+    const endTimeInMillis =this.dateUtil.getMillis( this.toDate,DateTimeFormatEnum.FULL_DATE_TIME);
+    const createdAtRange ={startTimeInMillis,endTimeInMillis};
+    const body = {createdAtRange,"driverId":"TAP_DRIVER@8851773010"}
+    this.reportservice.downloadReport("http://tbapi.truckbuddy.co.in/driverAuth/search/report",body)
+    .subscribe(
+      data=>{
+          this.onSuccess("File is Downloading")
+          saveAs(data,"Vehicle Distance Covered Report"+ '.csv');
+      },
+      error=>{
+        this.onError("There is some issue while downloading this file.")
+        console.log(error);
+      }
+    )
+    
   }
 }

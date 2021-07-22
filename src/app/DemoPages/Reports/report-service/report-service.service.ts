@@ -63,10 +63,3 @@ export class ReportServiceService {
   }
   
 }
-// time:{
-//   sjkj,
-//   shsjhs,
-// }
-// {
-//   element time
-// }

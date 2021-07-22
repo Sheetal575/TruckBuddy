@@ -18,7 +18,7 @@ export class EachReportComponent implements OnInit {
   }
   reports: any[] =  this.reportservice.reports;
   disable:boolean[] =[
-    true,false,true,true,true,false,false,true
+    true,false,false,true,true,false,false,true
   ]
   // requestCreatedTime = {
   //   "startTimeInMillis": 1619807400000,
@@ -28,7 +28,7 @@ export class EachReportComponent implements OnInit {
   httpurl:any[]=[
     {url :""},
     {url:"https://tbapi.truckbuddy.co.in/paymentInvoice/search/report"},
-    {url:""},
+    {url:" http://tbapi.truckbuddy.co.in/driverAuth/search/report"},
     {url:""},
     {url:""},
     {url:"https://tbapi.truckbuddy.co.in/orderInvoice/search/report"},
@@ -37,8 +37,7 @@ export class EachReportComponent implements OnInit {
 
   ]
    show(error){
-    this.toastr.error('Please Enter Date and Time')
-    // this.toastr.error('There is some Problem While generating this file')  
+    this.toastr.error('There is some Problem While generating this file')  
    }
    showFileStatus(){
      this.toastr.success('File Generated.')
@@ -59,7 +58,6 @@ export class EachReportComponent implements OnInit {
       console.log(url);
     }else{
       this.checkReport(index);
-      console.log(this.argument);
       return this.reportservice.downloadReport(url,this.argument)
       .subscribe(
         data=>{
@@ -81,6 +79,7 @@ export class EachReportComponent implements OnInit {
   //set body of http request according to the report---
   checkReport(index:number){
     const requestCreatedTime=this.reportservice.time;
+    
     if(index == 1){
       const businessId = this.reportservice.clientid;
       const body = {requestCreatedTime,businessId};
@@ -91,7 +90,12 @@ export class EachReportComponent implements OnInit {
       this.argument = body;
     }else if(index == 6){
       const clientId = this.reportservice.clientid;
+      
       const body = {requestCreatedTime,clientId};
+      this.argument = body;
+    }else if(index == 2){
+      const createdAtRange = requestCreatedTime;
+      const body = {createdAtRange};
       this.argument = body;
     }
   }
